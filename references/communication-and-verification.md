@@ -59,11 +59,18 @@ Do not dump full stage anchors, registries, lifecycle metadata, internal checks,
 
 Use the required project-round report order only for real project-round wrap-up or manual completion summaries. Do not force the format onto simple status answers.
 
+## Exact Revision Gate
+
+Bind verification and acceptance to one exact candidate commit. A branch name, worktree path, progress report, or earlier PASS is insufficient when the candidate changed. The verifier stays read-only; remediation returns to the current writer unless ownership is explicitly transferred. Rerun relevant checks after canonical merge.
+
 ## Verification
 
 Before claiming completion:
 
 - confirm stage anchor was read or repaired when required;
+- confirm re-grounding occurred after compaction, handoff, resume, model change, child completion, stage transition, or new requirements;
+- confirm only one active writer and writable line existed;
+- confirm the verifier evaluated the exact accepted candidate commit;
 - confirm proposed next action advances the current stage goal;
 - confirm no project-specific vocabulary was added to this generic skill;
 - for code/config/prompt/runtime changes, confirm the task workspace, verified commit, and runtime version were not conflated;

@@ -9,6 +9,8 @@ It helps a manager or parent agent answer five questions before work continues:
 3. **Are we reusing the canonical owner instead of creating another path?**
 4. **Can this change be verified, merged, and promoted safely?**
 5. **Who owns every artifact until it is cleaned, archived, or adopted?**
+6. **Is there exactly one active writer and one candidate under verification?**
+7. **Was project state re-grounded after every context transition?**
 
 ## ✨ What it governs
 
@@ -21,14 +23,21 @@ It helps a manager or parent agent answer five questions before work continues:
 - 📦 **Resource envelopes** — bound memory, IO, cache pressure, concurrency, and partial progress.
 - 🔐 **Approval boundaries** — separate safe continuation from actions requiring explicit authority.
 - 🤝 **Parent continuation** — child PASS is evidence; the parent still drives the original request to terminal.
+- 🔒 **Single-writer admission** — one active run, writer, writable worktree, base, and candidate per stage.
+- 🎯 **Exact verifier gate** — PASS binds to one candidate commit and becomes stale when that candidate changes.
+- 🧩 **Context re-grounding** — compaction, resume, handoff, and new requirements force a reread of project-owned state.
 - 💬 **Minimal reporting** — expose decision-relevant facts without dumping internal process.
 
 ## 🧠 Operating model
 
 ```text
-stage anchor
+stage anchor + canonical owners
     ↓
-aligned smallest next action
+context re-grounding
+    ↓
+single-writer admission
+    ↓
+aligned bounded dispatch
     ↓
 reuse / repair / lifecycle decision
     ↓
@@ -110,6 +119,9 @@ references/communication-and-verification.md  # reporting and final checks
 - A delivered approval request does not authorize the protected action by itself.
 - A temporary artifact without cleanup ownership is unfinished work.
 - A runtime must not depend on an unmerged worktree or dirty checkout.
+- A second writer is blocked until the active writer is terminal and ownership transfer is recorded.
+- A verifier PASS is valid only for the exact candidate commit it inspected.
+- Chat summaries and progress cards do not replace the project-owned stage anchor.
 
 ## 📄 License
 

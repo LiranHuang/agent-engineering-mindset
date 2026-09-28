@@ -14,7 +14,11 @@ A stage anchor is a project-owned artifact or document that records:
 - superseded routes, if any;
 - active decision boundaries, if any;
 - protected boundaries not authorized by the current stage;
-- lifecycle ownership for stage-level artifacts when applicable.
+- lifecycle ownership for stage-level artifacts when applicable;
+- canonical source, data, and runtime owners;
+- admitted base revision, active run, active writer, and writable worktree;
+- allowed and forbidden paths;
+- candidate commit and verifier state.
 
 Before choosing, accepting, dispatching, merging, or continuing work, the parent must:
 
@@ -41,6 +45,11 @@ If no reliable current stage anchor exists, or if the existing anchor is stale o
 
 Stage anchors must be written only inside the project directory or other project-owned state location, never into generic skills.
 
+## Context Re-grounding Gate
+
+Treat compaction, handoff, resume, model change, child completion, stage transition, and new requirements as re-grounding events. Reread the anchor and verify the current goal, canonical revision, Git status, active run, active writer, writable worktree, candidate commit, and verifier state. Chat summaries and progress cards are not authoritative project state.
+
+Place requirements outside the current stage into backlog or request an explicit stage change. A blocker may justify bounded analysis but does not become the new stage goal automatically. Hold mutation when current state cannot be re-proven.
 
 ## Parent Continuation Gate
 

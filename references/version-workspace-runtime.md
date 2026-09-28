@@ -12,7 +12,10 @@ Trust advances only after verification and merge gates pass. Run services from t
 
 Before editing, inspect the base commit and pre-existing changes in the intended paths.
 
-- Give every agent or independently owned task its own writable branch and worktree. Never let multiple agents share one mutable checkout; if isolation is unavailable, keep the conflicting path read-only or hold the task.
+- Maintain one active run, one writer, one writable branch/worktree, one admitted base, and one candidate commit per project stage.
+- Allow parallel analysis only when it is read-only. Never start a second writer to repair, replace, accelerate, or unblock an active writer.
+- Do not let the parent edit while an executor owns the write line. Transfer ownership only after the previous writer is terminal, its state is preserved, and the stage anchor records the transfer.
+- Give the admitted writer its own branch and worktree. Never let multiple agents share one mutable checkout; if isolation is unavailable, keep the conflicting path read-only or hold the task.
 - Start each task branch from the current canonical commit and record that base revision.
 - Do not overwrite, stash, reset, stage, or absorb changes that are not owned by the current task.
 - If ownership of an existing change is unclear, hold the conflicting path until ownership is resolved.
@@ -21,6 +24,12 @@ Before editing, inspect the base commit and pre-existing changes in the intended
 - Inspect the staged diff and run the smallest meaningful tests that exercise the changed behavior through its real entry path.
 - A checkpoint commit may preserve incomplete work for continuation or handoff, but it is not verified and must not be merged or run.
 - When a semantic unit is complete, preserve it in a scoped commit with its verification evidence. A local commit does not authorize push, merge, restart, or other external publication.
+
+### Exact Candidate Verification
+
+The verifier names the exact candidate commit and stage-anchor revision it evaluates, stays read-only, and returns PASS or FAIL with bounded evidence. Accept PASS only when the candidate equals the verifier target, remains within scope, descends from the admitted base or an explicitly accepted replacement, passes required tests, needs no untracked mutable dependency, and has not been superseded.
+
+FAIL returns work to the same write line unless ownership is explicitly transferred. Pending, stale, or failed verification blocks merge, runtime promotion, stage closure, and the next stage.
 
 ### Verified Commit To Canonical Merge
 
