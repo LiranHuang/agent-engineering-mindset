@@ -1,6 +1,6 @@
 ---
 name: "agent-engineering-mindset"
-description: "Long-running project work, delegation, merges, and runtime promotion with anchored single-writer verified delivery."
+description: "Use for long-running project work, delegation, merges, and runtime promotion; enforce anchored single-writer verified delivery."
 ---
 
 # Agent Engineering Mindset
