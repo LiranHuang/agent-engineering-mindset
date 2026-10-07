@@ -1,88 +1,56 @@
-# Stage Anchors and Parent Continuation
+# Main Goal, Stage Alignment, and Continuation
 
-## Stage Anchor Contract
+## Goal hierarchy
 
-Before parent continuation can pass, resolve a `stage_anchor`.
+Use one authoritative chain:
 
-A stage anchor is a project-owned artifact or document that records:
+`main goal -> current stage goal -> next action -> acceptance evidence`
 
-- current stage goal;
-- continuation base artifacts and metrics;
-- true target surface;
-- forbidden substitute surfaces;
-- allowed support surfaces;
-- superseded routes, if any;
-- active decision boundaries, if any;
-- protected boundaries not authorized by the current stage;
-- lifecycle ownership for stage-level artifacts when applicable;
-- canonical source, data, and runtime owners;
-- admitted base revision, active run, active writer, and writable worktree;
-- allowed and forbidden paths;
-- candidate commit and verifier state.
+- **Main goal:** the user's observable end state. It remains authoritative until the user changes, pauses, cancels, or replaces it.
+- **Stage goal:** the smallest measurable outcome currently needed to advance the main goal.
+- **Next action:** the highest-ROI safe action that advances the stage goal on the true target surface.
+- **Acceptance evidence:** the evidence used by the single final validation gate.
 
-Before choosing, accepting, dispatching, merging, or continuing work, the parent must:
+A stage may narrow execution but may not redefine, weaken, silently broaden, or substitute for the main goal. A blocker, child task, artifact, metric, local PASS, or available tool does not become the goal automatically. Stage completion closes only that stage; compare the result with the remaining main-goal gap before continuing or claiming completion.
 
-1. Locate the current project stage anchor from dispatch, registry, project policy, roadmap, or known project anchor path.
-2. Read the anchor.
-3. Populate the parent gates:
-   - `continuation_base_check`
-   - `target_surface_check`
-   - `progress_delta_check`
-   - `supersede_check`
-   - `project_vocabulary_check`
-   - `artifact_minimality_check`
-   - `lifecycle_check`
-4. Cite the anchor in dispatch, parent acceptance, parent merge, decision registry, or final report when relevant.
+## When a durable stage anchor is required
 
-Hard fail if a stage anchor is expected but missing, unreadable, stale, or contradicted by the proposed next action.
+Create or update one project-owned anchor when work spans turns, agents, mutable revisions, a handoff, or a material stage boundary. Do not require a durable anchor for a short, single-owner task whose goal and state remain visible in the active context.
 
-If no reliable current stage anchor exists, or if the existing anchor is stale or contradicted by accepted evidence, stop normal continuation and do one of:
+A durable anchor contains only the state needed for continuation:
 
-- create a project-owned stage anchor from accepted evidence;
-- update the project-owned stage anchor to cite latest accepted parent-state evidence;
-- mark stale routes as superseded and update the anchor;
-- ask the user for missing stage goal or target surface if it cannot be inferred safely.
+- main goal and observable completion evidence;
+- current stage goal and its explicit contribution to the main goal;
+- true target surface and forbidden substitutes;
+- canonical semantic and runtime owners;
+- admitted baseline, active writer, intended final accepted state, and allowed scope;
+- active decision boundaries;
+- retained or superseded artifacts that affect continuation.
 
-Stage anchors must be written only inside the project directory or other project-owned state location, never into generic skills.
+Use an existing roadmap, issue, state file, or equivalent canonical artifact. Do not create a parallel ledger. Repair a required missing or contradictory anchor from accepted evidence; ask the user only when the unresolved choice would materially change the desired outcome, authority, cost, or risk.
 
-## Context Re-grounding Gate
+## Re-grounding
 
-Treat compaction, handoff, resume, model change, child completion, stage transition, and new requirements as re-grounding events. Reread the anchor and verify the current goal, canonical revision, Git status, active run, active writer, writable worktree, candidate commit, and verifier state. Chat summaries and progress cards are not authoritative project state.
+After compaction, handoff, resume, ownership transfer, stage transition, or a requirement that can change the target, reread the active goal and applicable anchor. Recheck the current goal hierarchy, baseline, ownership, intended final state, and unresolved decision boundaries. Summaries and progress cards are supporting context, not replacements for authoritative goal or project state.
 
-Place requirements outside the current stage into backlog or request an explicit stage change. A blocker may justify bounded analysis but does not become the new stage goal automatically. Hold mutation when current state cannot be re-proven.
+Hold affected mutation when the main goal, stage relationship, target surface, ownership, or baseline cannot be re-established. Do not turn the hold into a new repair program unless that repair is the highest-ROI necessary unblocker.
 
-## Parent Continuation Gate
+## ROI continuation rule
 
-Before continuing after child completion, partial success, discovery of a new blocker layer, or a stage transition, the parent must decide:
+For each safe and authorized candidate action, compare:
 
-- Does the action advance the current stage goal?
-- Does it operate on the true target surface rather than a substitute surface?
-- Does it produce direct progress, unblock progress, reduce risk, or merely create local substitute work?
-- Does it require a user decision boundary?
-- Does it require a new entity, and if so, did it pass artifact minimality?
-- Does every new or superseded entity have a lifecycle decision?
+`expected main-goal progress / (time + compute + coordination + operational risk + likely rework)`
 
-A child local PASS does not become parent stage progress unless it cites or updates the stage anchor and passes these checks.
+A numeric score is optional. The parent must be able to explain why the selected action has the highest reasonable total-goal ROI among available in-scope options.
 
+Prefer direct progress, then necessary unblockers, then risk reduction, then acceptance-critical evidence or cleanup. Reject drift, substitute surfaces, duplicated proof, speculative infrastructure, and low-ROI side work. Required safety, authorization, and final validation are not optional merely because their immediate progress is indirect.
 
-## Gate Outcomes
+Before continuing after a stage or child result, confirm:
 
-Allowed/positive outcomes:
+- the result changes the real main-goal gap rather than only a local metric;
+- the proposed next stage is necessary for the main goal;
+- the action targets the canonical surface;
+- its expected benefit justifies cost, risk, and coordination;
+- it does not require an ungranted decision or authority boundary.
 
-- `pass_stage_anchor_repair`: anchor was created or updated from accepted evidence, with no direct target delta claimed.
-- `pass_reuse_existing_entity`: work reused, repaired, or extended the canonical owner instead of creating a duplicate.
-- `pass_new_entity_with_lifecycle`: a new entity was necessary and lifecycle metadata was recorded.
-- `pass_superseded_entity_archived`: old entity was safely archived/cleaned after replacement.
-- `pass_communication_minimality`: user-visible output used the shortest accurate form for the task type.
-- `pass_resource_envelope`: task has explicit bounded RSS/IO/cache strategy.
-
-Hold/fail outcomes:
-
-- `fail_missing_stage_anchor`: no reliable anchor exists for a project that requires one.
-- `fail_anchor_conflict`: proposed next action contradicts the current anchor.
-- `fail_unnecessary_entity`: proposed or created entity is redundant or lacks necessity.
-- `fail_unmanaged_lifecycle`: new entity lacks owner, scope, status, cleanup/archive condition, or reference.
-- `fail_overreported`: output was expanded only to satisfy a template, exposed unnecessary internal process, or repeated mechanical report sections for a narrow answer.
-- `hold_cleanup_required`: work is otherwise complete, but temporary/scratch/superseded/runtime entities need cleanup before final wrap-up.
-- `hold_resource_envelope_required`: task may touch large resources but lacks bounds.
-- `blocked_memory_boundary`: task stopped at the configured memory/IO stop condition with reusable partial progress.
+If these checks fail, select a better aligned action, backlog the side work, request the material decision, or report the blocker.

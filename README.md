@@ -1,128 +1,97 @@
-# 🧭 Agent Engineering Mindset
+# Agent Engineering Mindset
 
-A deployable OpenClaw skill for keeping multi-agent engineering work aligned, isolated, verifiable, and runnable from one clean canonical source.
+A deployable OpenClaw skill for keeping repository changes in clean committed worktrees while long-running engineering work remains anchored to one main goal, aligned through necessary stages, prioritized by total-goal ROI, and accepted through one final validation gate.
 
-It helps a manager or parent agent answer five questions before work continues:
+## Core questions
 
-1. **Are we advancing the real stage goal?**
-2. **Are we changing the true target instead of a substitute?**
-3. **Are we reusing the canonical owner instead of creating another path?**
-4. **Can this change be verified, merged, and promoted safely?**
-5. **Who owns every artifact until it is cleaned, archived, or adopted?**
-6. **Is there exactly one active writer and one candidate under verification?**
-7. **Was project state re-grounded after every context transition?**
+1. What observable user outcome is the authoritative main goal?
+2. How does the current stage measurably advance that goal?
+3. Which safe in-scope next action has the highest expected main-goal ROI?
+4. Are we changing the canonical target with clear ownership?
+5. What exact final state will receive the single acceptance validation?
+6. What remains between a stage-local result and main-goal completion?
 
-## ✨ What it governs
-
-- 🧭 **Stage anchors** — goals, continuation base, target surface, boundaries, and acceptance source.
-- 🌳 **Isolated worktrees** — one writable owner per task with explicit base revision and path ownership.
-- ✅ **Verified merges** — test the task branch, inspect semantic conflicts, then retest the merged tree.
-- 🚀 **Clean canonical runtime** — run services only from an explicitly verified canonical commit.
-- ♻️ **Artifact minimality** — reuse or repair before creating files, scripts, agents, services, state, or entrypoints.
-- 🗂️ **Lifecycle ownership** — every retained entity has an owner, status, reference, and cleanup condition.
-- 📦 **Resource envelopes** — bound memory, IO, cache pressure, concurrency, and partial progress.
-- 🔐 **Approval boundaries** — separate safe continuation from actions requiring explicit authority.
-- 🤝 **Parent continuation** — child PASS is evidence; the parent still drives the original request to terminal.
-- 🔒 **Single-writer admission** — one active run, writer, writable worktree, base, and candidate per stage.
-- 🎯 **Exact verifier gate** — PASS binds to one candidate commit and becomes stale when that candidate changes.
-- 🧩 **Context re-grounding** — compaction, resume, handoff, and new requirements force a reread of project-owned state.
-- 💬 **Minimal reporting** — expose decision-relevant facts without dumping internal process.
-
-## 🧠 Operating model
+## Operating model
 
 ```text
-stage anchor + canonical owners
+main goal
     ↓
-context re-grounding
+necessary current stage
     ↓
-single-writer admission
+highest-ROI aligned next action
     ↓
-aligned bounded dispatch
+canonical owned implementation
     ↓
-reuse / repair / lifecycle decision
+final intended state
     ↓
-resource + approval boundaries
+one proportionate validation gate
     ↓
-isolated task worktree
-    ↓
-verified task commit
-    ↓
-canonical merge + merged-tree tests
-    ↓
-clean canonical runtime
-    ↓
-parent acceptance + lifecycle cleanup
+continue against remaining main-goal gap or close
 ```
 
-## 🚀 Start here
+## What it governs
+
+- main-goal continuity and measurable stage alignment;
+- ROI-based continuation and rejection of drift or substitute work;
+- canonical ownership and bounded delegation;
+- version, workspace, artifact, and runtime state integrity;
+- proportionate lifecycle and large-resource handling;
+- one final validation gate bound to the actual accepted state.
+
+It does not replace OpenClaw tool policy, permissions, approvals, sandboxing, native goal state, managed task or worktree facilities, or project-specific rules.
+
+## Installation
 
 The repository root is the installable skill package because it contains `SKILL.md`.
-
-From the repository root, install for all local agents:
 
 ```bash
 openclaw skills install . --global
 ```
 
-If an older copy already exists, review the difference first. Replace it only intentionally:
+If replacing an older reviewed copy, inspect the diff first and replace it intentionally:
 
 ```bash
 openclaw skills install . --global --force
 ```
 
-### Install for one agent
+For one agent:
 
 ```bash
 openclaw skills install . --agent <agent-id>
 ```
 
-### Install from a remote Git repository after publication
-
-```bash
-openclaw skills install git:<owner>/agent-engineering-mindset --global
-```
-
-OpenClaw may present an install-policy review. Approve only the exact reviewed package; never bypass a blocked policy.
-
-## 🔍 Verify installation
+## Verification
 
 ```bash
 openclaw skills info agent-engineering-mindset --json
 openclaw skills check --agent <agent-id> --json
 ```
 
-For agents with an explicit `agents.entries.<id>.skills` allowlist, add `agent-engineering-mindset` to the existing list without replacing unrelated entries.
+For agents with an explicit skill allowlist, add `agent-engineering-mindset` without replacing unrelated entries.
 
-## 🧩 Skill boundaries
+## Safety defaults
 
-- This standalone skill owns stage alignment, parent continuation, worktree/merge/runtime integrity, artifact lifecycle, resource bounds, decision gates, and minimum repair verification.
-- Routing and collaboration layers may transport work, but must not redefine these engineering gates.
-- Project anchors and project-specific vocabulary remain inside each project, never in this generic package.
+- A stage goal cannot replace, weaken, or silently broaden the main goal.
+- Stage completion and child PASS do not complete the parent goal.
+- Low-ROI side work and substitute surfaces are rejected.
+- One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
+- A local commit does not authorize publication, merge, deployment, or restart.
+- Every accepted repository change ends in a scoped local commit and an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
+- Acceptance uses one final validation gate on the exact state intended for adoption.
+- If that state changes, the prior result is stale and is replaced rather than layered with another gate.
+- Runtime must load the accepted configuration, artifact, or revision rather than an accidental scratch or dirty dependency.
 
-## 📦 Repository layout
+## Repository layout
 
 ```text
-SKILL.md                                      # compact executable procedure
-README.md                                     # human deployment guide
-references/stage-anchors-and-continuation.md  # parent-state gates
-references/version-workspace-runtime.md       # branch/worktree/merge/runtime rules
-references/artifact-lifecycle.md              # minimality and cleanup semantics
-references/approval-and-resource-boundaries.md # approvals and bounded IO/RSS
-references/communication-and-verification.md  # reporting and final checks
+SKILL.md
+references/stage-anchors-and-continuation.md
+references/version-workspace-runtime.md
+references/artifact-lifecycle.md
+references/approval-and-resource-boundaries.md
+references/communication-and-verification.md
 ```
 
-## 🛡️ Safety defaults
+## License
 
-- A local commit does not authorize push, merge, deployment, or restart.
-- A clean textual merge does not prove semantic compatibility.
-- A child result does not close the parent request.
-- A delivered approval request does not authorize the protected action by itself.
-- A temporary artifact without cleanup ownership is unfinished work.
-- A runtime must not depend on an unmerged worktree or dirty checkout.
-- A second writer is blocked until the active writer is terminal and ownership transfer is recorded.
-- A verifier PASS is valid only for the exact candidate commit it inspected.
-- Chat summaries and progress cards do not replace the project-owned stage anchor.
-
-## 📄 License
-
-MIT — see [`LICENSE`](LICENSE).
+MIT — see `LICENSE`.

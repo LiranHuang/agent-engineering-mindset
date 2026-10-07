@@ -1,57 +1,59 @@
-# Version, Workspace, Merge, and Runtime Integrity
+# Version, Workspace, and Runtime Integrity
 
-## Version And Workspace Integrity
+## State model
 
-For code, config, prompt, runtime, or workflow changes, use one state model:
+For a Git-backed code, configuration, test, build, or repository-documentation change, use:
 
-`isolated task worktree -> verified commit -> merged canonical branch -> clean canonical runtime checkout`
+`clean admitted baseline -> bounded task-owned change -> exact staged candidate -> scoped local commit -> clean adopted worktree -> loaded runtime state`
 
-Trust advances only after verification and merge gates pass. Run services from the clean canonical source checkout at an explicitly selected merged commit.
+During an active edit the worktree may be temporarily dirty. That dirt must not survive completion, a stage transition, a pause, or a handoff. The worktree that receives and adopts the change is clean only when `git status --porcelain=v1 --untracked-files=all` returns no records, including staged, unstaged, untracked, and submodule state.
 
-### Isolated Task Worktree To Verified Commit
+## Workspace and write ownership
 
-Before editing, inspect the base commit and pre-existing changes in the intended paths.
+- Identify the repository root, adoption worktree, branch or detached revision, baseline, and relevant pre-existing changes before editing.
+- Run the full porcelain status check before the first edit. Do not edit a dirty adoption worktree or mix with pre-existing state. Use a clean isolated branch or worktree when the existing dirt is outside the task.
+- If cleaning or recovering existing dirt is itself the authorized task, inventory it first and change only paths with proven ownership.
+- Keep one writer for each overlapping semantic surface. Concurrent writers are allowed only on clearly disjoint surfaces with explicit ownership.
+- Use an isolated branch or worktree when concurrency, merge risk, handoff, or repository policy justifies it. Do not require one for a small uncontested edit.
+- Never overwrite, stash, reset, stage, absorb, or clean unrelated state.
+- Keep generated output outside the source worktree or in an intentional project-owned ignored location unless it is an adopted deliverable. Do not add an ignore rule merely to hide unexplained dirt.
+- Stage explicit task-owned paths and inspect the staged diff. Do not use broad staging that could absorb unrelated state.
+- A commit preserves a version; it does not by itself prove correctness or authorize push, merge, restart, deployment, or publication.
 
-- Maintain one active run, one writer, one writable branch/worktree, one admitted base, and one candidate commit per project stage.
-- Allow parallel analysis only when it is read-only. Never start a second writer to repair, replace, accelerate, or unblock an active writer.
-- Do not let the parent edit while an executor owns the write line. Transfer ownership only after the previous writer is terminal, its state is preserved, and the stage anchor records the transfer.
-- Give the admitted writer its own branch and worktree. Never let multiple agents share one mutable checkout; if isolation is unavailable, keep the conflicting path read-only or hold the task.
-- Start each task branch from the current canonical commit and record that base revision.
-- Do not overwrite, stash, reset, stage, or absorb changes that are not owned by the current task.
-- If ownership of an existing change is unclear, hold the conflicting path until ownership is resolved.
-- Write test outputs, generated state, caches, screenshots, and build artifacts only to a temporary directory or a project-owned artifact directory with a cleanup rule. Clean disposable outputs before handoff or completion, and never let tests mutate source or runtime configuration as an untracked side effect.
-- Stage only explicit task-owned paths; do not use broad staging that can absorb unrelated work.
-- Inspect the staged diff and run the smallest meaningful tests that exercise the changed behavior through its real entry path.
-- A checkpoint commit may preserve incomplete work for continuation or handoff, but it is not verified and must not be merged or run.
-- When a semantic unit is complete, preserve it in a scoped commit with its verification evidence. A local commit does not authorize push, merge, restart, or other external publication.
+If the baseline changes, required untracked dependencies appear, or semantic ownership overlaps, stop affected mutation and reconcile before acceptance.
 
-### Exact Candidate Verification
+## Clean closure
 
-The verifier names the exact candidate commit and stage-anchor revision it evaluates, stays read-only, and returns PASS or FAIL with bounded evidence. Accept PASS only when the candidate equals the verifier target, remains within scope, descends from the admitted base or an explicitly accepted replacement, passes required tests, needs no untracked mutable dependency, and has not been superseded.
+Perform the one final validation gate on the exact staged candidate. When it passes, create a scoped local commit without changing the validated tree, confirm the commit contains only the accepted candidate, and run the porcelain status check once as part of the same acceptance gate. Do not start another semantic task or report completion until the status is empty.
 
-FAIL returns work to the same write line unless ownership is explicitly transferred. Pending, stale, or failed verification blocks merge, runtime promotion, stage closure, and the next stage.
+If work must pause before acceptance, create an explicitly unverified task-only checkpoint commit so the worktree is clean. It may be continued on the same owned line but must not be merged, deployed, run, or treated as accepted. If commits are explicitly prohibited, stop before mutation and surface the conflict instead of deliberately leaving a persistent dirty change.
 
-### Verified Commit To Canonical Merge
+## One final validation
 
-Merge is allowed only after all of these checks pass:
+Use one acceptance gate after the change reaches the exact final state intended for adoption.
 
-- Refresh the canonical branch and confirm the task's recorded base has not changed unexpectedly.
-- Compare the task diff against all canonical changes since the recorded base.
-- Confirm there are no textual conflicts, overlapping semantic owners, incompatible config/schema changes, missing tracked dependencies, or untracked files required by runtime code.
-- If Git reports a clean merge but the same behavior or owner changed on both branches, treat it as a semantic conflict and reconcile it explicitly.
-- Merge the verified task commit into the canonical branch using normal Git merge semantics. Do not copy files between shared checkouts as a substitute for merge.
-- Inspect the resulting merge diff and rerun the relevant tests against the merged tree. A task-branch PASS does not prove the merged tree.
-- If the baseline changes during review or merge, stop, update the task branch against the new canonical base, resolve ownership, and rerun verification.
-- Keep the task branch/worktree until the merged canonical tree passes verification; then remove or archive it according to repository policy.
+The single validation pass may include multiple proportionate checks, such as targeted tests, the real positive entry path, an absence or negative check for retired behavior, configuration loading, and runtime health. These checks form one evidence bundle and one PASS or FAIL decision.
 
-### Canonical Merge To Runtime
+Do not stack branch validation, independent verifier validation, merged-tree validation, and runtime validation as separate mandatory gates. Choose the actual acceptance target:
 
-- Use the canonical source checkout as the runtime source.
-- Restart services only from the canonical checkout after it is updated to the explicitly verified merged commit.
-- Require the canonical runtime checkout to have no staged, unstaged, or untracked runtime dependencies before restart.
-- Record the exact runtime commit and verify service working directory, loaded revision, health, and relevant behavior after restart.
-- Never restart services from an agent task worktree, an unmerged branch, a shared dirty checkout, or uncommitted files.
-- If the canonical checkout is dirty, hold restart, identify ownership, and either commit and merge the complete verified semantic unit or remove the unrelated runtime dependency through its owner.
-- Roll back by selecting and checking out a previously verified canonical commit, then restart and verify.
+- for a local change, the exact staged candidate and the scoped local commit with the same tree;
+- for a versioned integration, the exact final integrated revision;
+- for a generated artifact, the exact adopted artifact;
+- for a runtime change, the exact loaded configuration or revision and its relevant behavior.
 
-Branches and worktrees isolate development; Git commits and merges define version history; the clean canonical source checkout defines runtime.
+An independent verifier may execute the single gate when the risk or project policy requires independence. It replaces the ordinary acceptance pass; it does not add another layer.
+
+If integration or later edits change the target after validation, the earlier result is stale. Perform one replacement validation on the new final state. A failed pass returns to the same owned implementation path; after repair, run the single final validation again.
+
+## Integration and runtime
+
+Integrate using normal repository semantics and inspect ownership or conflicts before acceptance. A clean textual merge does not settle a semantic conflict.
+
+For runtime-affecting work:
+
+- identify the real loader, working directory, configuration source, artifact, and revision;
+- load the final intended state rather than an agent scratch path or accidental dirty dependency;
+- include loaded-state identity, health, and relevant behavior in the single final validation pass;
+- keep a known recoverable prior state when rollback is proportionate to the risk.
+
+Completion requires agreement between the accepted final state and the runtime state when runtime is in scope.

@@ -1,117 +1,87 @@
 ---
 name: "agent-engineering-mindset"
-description: "Use for long-running project work, delegation, merges, and runtime promotion; enforce anchored single-writer verified delivery."
+description: "Use for any repository code or configuration change and for long-running project work, stage transitions, delegation, merges, and runtime promotion; enforce clean-worktree closure, main-goal alignment, ROI priority, and one final validation gate."
 ---
 
 # Agent Engineering Mindset
 
-Use this skill for long-running project work, parent/executor coordination, stage transitions, artifact acceptance, merges, and runtime promotion. It guides behavior but does not replace tool policy, sandboxing, approvals, or managed-worktree enforcement. Stop mutation when a required invariant cannot be proven.
+Use this skill for any Git-backed code, configuration, test, build, or repository-documentation change, and when project work can drift across stages, agents, revisions, artifacts, or runtime state. It adds goal continuity, ROI discipline, ownership, state integrity, and clean-worktree closure. It does not replace tool policy, approvals, permissions, or project-specific rules.
 
-## Procedure
+## 1. Anchor the main goal and current stage
 
-### 1. Establish one project contract
+Treat the user's observable end state as the authoritative main goal. Use a native active goal when one exists; otherwise use the current user request and authoritative project evidence. Do not create a second goal store merely to satisfy this skill.
 
-Read one project-owned stage anchor before dispatching, editing, accepting, merging, or continuing. Resolve the goal and non-goals; canonical source, data, and runtime owners; canonical and admitted base revisions; true, allowed, and forbidden surfaces; active run, writer, and writable worktree; candidate commit and verifier state; decision boundaries; and lifecycle ownership.
+Define the current stage goal as the smallest measurable outcome that is necessary for the main goal. Record or resolve, only as needed:
 
-Use an existing roadmap, issue, state file, or equivalent canonical artifact. Keep project state out of this generic skill. If the anchor is missing, stale, unreadable, or contradicted, stop and repair it from accepted evidence or ask for the missing decision.
+- the main goal and completion evidence;
+- the current stage goal and how it advances the main goal;
+- non-goals and forbidden substitute surfaces;
+- the canonical source, data, configuration, artifact, and runtime owners;
+- the admitted baseline, active writer, intended final state, and decision boundaries.
 
-Consult [`references/stage-anchors-and-continuation.md`](references/stage-anchors-and-continuation.md). Complete this step when one current anchor and one true target surface govern the next action.
+A stage goal may narrow execution but must not replace, weaken, or silently broaden the main goal. A blocker, child deliverable, local PASS, new request, or convenient substitute does not become the main goal automatically. Put out-of-stage work in backlog or request an explicit goal or stage change.
 
-### 2. Re-ground after every context transition
+Use a durable project-owned stage anchor only when work spans turns, agents, revisions, or a material stage boundary. For short work, keep the anchor in the active task context instead of creating a ledger. Read [stage anchors and continuation](references/stage-anchors-and-continuation.md) when durable continuation state is required.
 
-After compaction, handoff, resume, model change, child completion, stage transition, or new requirements, reread the anchor and verify the goal, canonical revision, Git status, run, writer, worktree, candidate, and verifier state. Chat summaries and progress cards are not authoritative project state. Backlog out-of-stage requirements or request an explicit stage change; blockers do not become goals automatically.
+## 2. Choose the highest-ROI aligned next action
 
-Complete this step only when continuation is derived from current project evidence.
+Consider only actions that are safe, authorized, and consistent with the main goal. Compare candidate actions by their expected main-goal progress against total time, compute, coordination cost, operational risk, and future rework. Exact numeric scoring is optional; the ranking and reason must be clear.
 
-### 3. Select the smallest aligned next action
+Prefer, in order of actual expected value rather than ceremony:
 
-Classify the action as direct progress, unblock, risk reduction, substitute work, or drift. Reject low-value side work unless it is a bounded prerequisite. Identify the owner, expected delta, acceptance evidence, stop conditions, and approval boundaries before execution.
+1. direct progress on the true target surface;
+2. a bounded unblocker required for direct progress;
+3. risk reduction that protects likely progress;
+4. evidence or cleanup required for acceptance or safe continuation.
 
-For each protected action, record the target, authorized approver, allowed choices, and evidence required before execution. A request or displayed prompt alone never grants authority.
+Reject drift, substitute work, speculative infrastructure, duplicated evidence, and low-ROI side work unless they are necessary prerequisites. Do not optimize a stage metric when doing so lowers total main-goal ROI. For the selected action, know its owner, expected delta, cost or risk, acceptance evidence, stop condition, and approval boundary.
 
-Complete this step when the action advances the anchored stage goal on the true target surface.
+## 3. Keep one canonical implementation path
 
-### 4. Admit exactly one writable execution line
+Change the canonical semantic owner instead of adding a parallel owner, entry point, or fallback. Reuse, repair, consolidate, or retire before creating. Give retained artifacts an owner and cleanup, archival, adoption, or removal condition; keep tiny scratch output task-local and remove it when done.
 
-Maintain one active run, writer, writable branch/worktree, admitted base, and candidate per stage. Parallel lanes stay read-only. Never add a writer to accelerate, repair, replace, or unblock; the parent also stays read-only while an executor owns writes. Transfer only after the prior writer is terminal, its state is preserved, and the anchor records the transfer.
+One writer owns each overlapping semantic surface at a time. Independent writers may work concurrently only on clearly disjoint surfaces with explicit ownership. Preserve unrelated state and stop when ownership, baseline, target surface, or authority is ambiguous.
 
-Before admission, inspect the canonical checkout, active sessions, registered worktrees, branch, base, and pre-existing changes. Hold on another writer, ambiguous ownership, unexpected canonical dirt, or base mismatch.
+When delegating, provide the objective, authoritative context, exact writable scope, required deliverable, acceptance evidence, and stop conditions. Child output is evidence; it does not redefine or complete the parent goal.
 
-Complete this step when one unambiguous owner controls one isolated writable line.
+Read [artifact lifecycle](references/artifact-lifecycle.md) when creating or superseding durable artifacts. Read [approval and resource boundaries](references/approval-and-resource-boundaries.md) only for protected actions or genuinely large-resource work.
 
-### 5. Dispatch a bounded contract
+## 4. Preserve version and runtime integrity
 
-Every implementation dispatch states the anchor and run; objective and non-goals; base and worktree owner; allowed and forbidden paths; authoritative inputs; expected candidate; tests and acceptance criteria; stop conditions; and return evidence.
+For versioned or runtime-affecting changes, distinguish the admitted baseline, task-owned change, intended final integrated state, and loaded runtime state. Use an isolated worktree when concurrent work, merge risk, or repository policy justifies it; do not impose one on a small uncontested edit.
 
-Do not dispatch vague instructions such as “continue,” “finish the project,” or “fix everything.” A child may not redefine the stage, create a parallel canonical path, merge, publish, restart runtime, or clean unrelated state unless the dispatch grants that boundary explicitly.
+For every Git-backed change, treat a clean adoption worktree as a hard terminal invariant. Before the first edit, require an empty `git status --porcelain=v1 --untracked-files=all`. If the intended worktree is dirty, do not add another change: reconcile a clearly owned recovery task or use a clean isolated worktree. Never build on unrelated dirt.
 
-Complete this step when the child can determine success and mandatory stop conditions without inventing scope.
+Never overwrite, stash, reset, stage, absorb, or clean unrelated changes. If the baseline changes or semantic ownership overlaps, reconcile before acceptance. Runtime-affecting work must identify the real loader or entry path and must not depend on an unintended dirty checkout or untracked mutable file.
 
-### 6. Reuse before creating
+Keep generated outputs outside the source worktree or in project-owned ignored locations unless they are deliberate task-owned deliverables. For a completed change, use one final acceptance gate: stage only explicit task-owned paths, inspect and check that exact candidate, create a scoped local commit without changing its tree, and require the porcelain status to be empty before the gate returns PASS. A code-changing task, stage, pause, or handoff is not closed while its worktree contains staged, unstaged, or untracked task output. If work must pause before acceptance, preserve the bounded state in an explicitly unverified checkpoint commit and still leave the worktree clean; never merge or run that checkpoint as accepted. A local commit does not authorize push, merge, deployment, restart, or publication. If an explicit instruction forbids commits, stop before editing because a persistent repository change would conflict with this invariant.
 
-Apply:
+Read [version, workspace, and runtime integrity](references/version-workspace-runtime.md) before every Git-backed change and whenever handoff, merge, or runtime promotion is involved.
 
-`reuse existing -> repair canonical owner -> merge duplicates -> archive superseded -> create only when necessary`
+## 5. Use one final validation gate
 
-For every new entity, identify canonical owner, purpose, scope, status, reference, and cleanup or promotion condition. Reject parallel entrypoints, duplicate owners, per-run managers, and compatibility paths without removal conditions.
+Every change has exactly one acceptance gate, performed after the change reaches the final state intended for adoption. The gate may contain several proportionate checks, but they form one validation pass and one acceptance decision.
 
-Consult [`references/artifact-lifecycle.md`](references/artifact-lifecycle.md). Complete this step when every new or superseded entity has a lifecycle decision.
+Bind that validation to the exact final state: the task-owned diff, candidate revision, merged revision, generated artifact, configuration, or loaded runtime actually being accepted. Choose the smallest meaningful evidence set, such as the real positive entry path, targeted tests, an absence or negative check for retired behavior, and runtime health when runtime changed.
 
-### 7. Bound resources and durable ownership
+Do not require a task-branch PASS, a separate independent verifier PASS, and a second merged-tree PASS as cumulative gates. When integration changes the accepted state, validate the final integrated state once. An independent verifier may perform this single gate when risk or project policy warrants it, but it is not an additional mandatory layer.
 
-Use official durable tasks, sessions, managed worktrees, automations, approvals, and completion delivery for work that may outlive a turn. Never leave a bare background process as the only continuation path or let its owning session finish while it remains active.
+If the accepted state changes after validation, the result becomes stale. Replace it with one new final validation; do not accumulate validation layers. On failure, return to the same owned implementation path, repair it, and run the single final gate again.
 
-For large IO, record sizes, memory limits, chunking, filters, concurrency, spill location, partial progress, and stop condition. Prefer bounded streaming and one worker. Stop with reusable progress rather than clearing caches, killing unrelated processes, or restarting services without approval.
+Read [communication and single validation](references/communication-and-verification.md) when defining or reporting acceptance evidence.
 
-Consult [`references/approval-and-resource-boundaries.md`](references/approval-and-resource-boundaries.md). Complete this step when lifecycle ownership and resource bounds are explicit.
+## 6. Continue or close against the main goal
 
-### 8. Preserve version and workspace integrity
+After a stage completes, reassess the remaining main-goal gap and choose the next highest-ROI aligned action. Stage completion, artifact creation, a commit, or child completion is not main-goal completion.
 
-For code, config, prompt, runtime, or workflow changes, enforce:
+Claim completion only when the main observable outcome is satisfied, the final accepted state passed the single validation gate, unrelated state was preserved, and temporary or superseded entities were cleaned, archived, or adopted. Otherwise continue, hold for a real decision boundary, or report the evidenced blocker.
 
-`isolated task worktree -> task-owned diff -> tested candidate commit -> independent verification -> merged canonical branch -> clean canonical runtime checkout`
+## Completion check
 
-Record the base revision and pre-existing changes before editing. Never overwrite, stash, reset, stage, absorb, or clean changes outside the active run. Stage only explicit task-owned paths. Keep disposable output in task scratch or project artifact locations with cleanup rules.
-
-A checkpoint commit preserves work but is not verified. A task-branch PASS does not prove the merged tree. If the base changes, ownership overlaps, required untracked files appear, or a semantic owner changed on both branches, stop and reconcile before repeating verification.
-
-Consult [`references/version-workspace-runtime.md`](references/version-workspace-runtime.md). Complete this step when task workspace, candidate commit, canonical checkout, and runtime revision are distinct and evidenced.
-
-### 9. Enforce an exact verifier gate
-
-Verification names the exact candidate commit and stage anchor revision it evaluates. The verifier stays read-only and returns PASS or FAIL with tests and bounded evidence; it never repairs the candidate it judges.
-
-Accept PASS only when the evaluated commit equals the current candidate, descends from the admitted base or an explicitly accepted replacement, stays within authorized scope, passes required tests through the real entry path, needs no untracked mutable dependency, and has not been superseded.
-
-FAIL returns work to the same write line unless ownership is explicitly transferred. Do not create a replacement implementation line. Do not merge, promote runtime, close the stage, or start the next stage while verification is pending, stale, or failed. After merge, rerun relevant checks against the merged canonical tree.
-
-Consult [`references/communication-and-verification.md`](references/communication-and-verification.md). Complete this step when acceptance is bound to one exact revision.
-
-### 10. Fail closed on drift
-
-Stop mutation on anchor conflict; missing or stale state; a second writer; ambiguous ownership; unexpected base or canonical dirt; path escape; owner conflation; candidate/verifier mismatch; changed required inputs; failed re-grounding; or cleanup, reset, migration, publication, or promotion beyond authority. Do not convert the stop into a repair task without updating the anchor and obtaining authority; preserve evidence instead of destructive cleanup.
-
-Complete this step only when the invariant is restored or the authorized owner decides the boundary.
-
-### 11. Merge, promote, and close canonically
-
-Refresh the canonical branch and compare all changes since the admitted base. Inspect textual and semantic conflicts. If the baseline changed, update the task branch and rerun verification. Merge with normal Git semantics, inspect the merged diff, and retest the merged tree.
-
-Run or restart services only from a clean canonical checkout at an explicitly verified merged commit. Verify working directory, loaded revision, health, and relevant behavior. Never run from an agent worktree, dirty checkout, unmerged branch, or uncommitted dependency.
-
-After child completion, treat its output as evidence. Update parent state and continue until the anchored outcome is complete or genuinely blocked. Clean disposable outputs; archive or adopt stage artifacts; stop or adopt temporary watchers and owners; archive superseded entities after replacement verification.
-
-Complete this step when the anchor, canonical tree, verification evidence, runtime state when applicable, and lifecycle cleanup agree.
-
-## Verification checklist
-
-Before claiming completion, confirm:
-
-- one anchor governed the work and was re-grounded after context transitions;
-- one writer owned one admitted base, worktree, and candidate;
-- dispatch carried scope, tests, stop conditions, and return evidence;
-- the verifier evaluated the exact accepted commit;
-- worktree, canonical merge, and runtime revision stayed distinct;
-- unrelated state was preserved and lifecycle cleanup completed;
-- long-running work retained an official completion path;
-- the report states accepted revision, verification, remaining risk, and continuation status.
+- the main goal remained authoritative and the stage goal demonstrably advanced it;
+- the chosen action had the highest reasonable main-goal ROI among safe in-scope options;
+- one canonical implementation path and unambiguous write ownership were preserved;
+- the exact final accepted state passed one proportionate validation gate;
+- every Git worktree that received or adopted the task change has empty porcelain status;
+- runtime, artifacts, and lifecycle state agree with the accepted outcome;
+- remaining main-goal gaps, risks, or blockers are stated without promoting stage-local success to completion.

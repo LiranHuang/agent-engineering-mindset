@@ -71,4 +71,6 @@ Minimum lifecycle metadata:
 
 If lifecycle metadata would be excessive for a tiny local scratch artifact, keep it under task-local `tmp/` or project-owned scratch space and clean it before final wrap-up unless intentionally retained.
 
+For Git-backed work, task-created output that appears in `git status --porcelain=v1 --untracked-files=all` must be adopted in the scoped task commit or removed or relocated by its owner before completion, pause, or handoff. An ignored location is acceptable only when the project deliberately owns that output class; never add an ignore rule merely to conceal unexplained dirt.
+
 If an entity supersedes another, archive or clean up the superseded entity promptly when safe. Prefer recoverable archive/trash over destructive deletion.
