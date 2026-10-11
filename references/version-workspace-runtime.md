@@ -10,8 +10,9 @@ During an active edit the worktree may be temporarily dirty. That dirt must not 
 
 ## Workspace and write ownership
 
-- Identify the repository root, adoption worktree, branch or detached revision, baseline, and relevant pre-existing changes before editing.
-- Run the full porcelain status check before the first edit. Do not edit a dirty adoption worktree or mix with pre-existing state. Use a clean isolated branch or worktree when the existing dirt is outside the task.
+- Identify every intended writable surface before editing. Classify each as a versioned canonical owner, an unversioned live mirror, generated output, or runtime state, and identify the repository root, adoption worktree, branch or detached revision, baseline, and relevant pre-existing changes for every enclosing repository.
+- Run the full porcelain status check for every enclosing repository before the first mutation anywhere in the task. A target outside Git is not an exception: when it mirrors a Git-backed owner, update and accept the tracked owner first, then synchronize the live mirror and verify semantic parity. If the canonical repository is dirty or ownership is unresolved, leave the live mirror unchanged.
+- Do not edit a dirty adoption worktree or mix with pre-existing state. Use a clean isolated branch or worktree when the existing dirt is outside the task.
 - If cleaning or recovering existing dirt is itself the authorized task, inventory it first and change only paths with proven ownership.
 - Keep one writer for each overlapping semantic surface. Concurrent writers are allowed only on clearly disjoint surfaces with explicit ownership.
 - Use an isolated branch or worktree when concurrency, merge risk, handoff, or repository policy justifies it. Do not require one for a small uncontested edit.
@@ -27,6 +28,29 @@ If the baseline changes, required untracked dependencies appear, or semantic own
 Perform the one final validation gate on the exact staged candidate. When it passes, create a scoped local commit without changing the validated tree, confirm the commit contains only the accepted candidate, and run the porcelain status check once as part of the same acceptance gate. Do not start another semantic task or report completion until the status is empty.
 
 If work must pause before acceptance, create an explicitly unverified task-only checkpoint commit so the worktree is clean. It may be continued on the same owned line but must not be merged, deployed, run, or treated as accepted. If commits are explicitly prohibited, stop before mutation and surface the conflict instead of deliberately leaving a persistent dirty change.
+
+## Isolated worktree lifecycle
+
+A task-created isolated worktree is temporary execution infrastructure unless the project deliberately adopts it with a live owner, reason, reference, and removal condition. Empty porcelain is necessary but does not by itself close the worktree lifecycle.
+
+Before creating one:
+
+- enumerate current registrations with `git worktree list --porcelain` and inspect the intended branch, revision, and exact path;
+- reuse a compatible existing task worktree; do not create renamed retry, `verify2`, or `v2` siblings merely because setup, checkout, or validation failed;
+- define its live owner, purpose, starting revision, and terminal removal or adoption condition; and
+- if `git worktree add` partially fails, reconcile the intended path, registration, branch or detached revision, and files before retrying. Resume the same instance or roll back only proven task-created partial state after preserving any unique work.
+
+After the task change is integrated into the intended canonical target and that exact integrated state passes the single final validation, close the worktree lifecycle within the same acceptance gate:
+
+- resolve the exact registered path from `git worktree list --porcelain`; never infer a deletion target from a name pattern;
+- confirm it is not the canonical adoption worktree, has empty full porcelain status, contains no unresolved task evidence or unique unintegrated work, and has no active writer, process, or lock;
+- remove the registered worktree with `git worktree remove <exact-path>` without `--force`; do not delete a registered worktree as an ordinary filesystem directory;
+- use `git worktree prune` only for verified stale registrations whose directories are already absent, then confirm both the registration and exact path are gone; and
+- treat branch deletion as a separate lifecycle decision governed by explicit authorization or repository policy.
+
+At any other terminal outcome, including failure, cancellation, supersession, or an indefinite blocker, preserve unique task work on a named branch or explicit checkpoint when needed, then remove the worktree or deliberately adopt it with a live owner and concrete removal condition. A bounded pause or handoff may retain the worktree only when the continuing owner and next-use or removal condition are explicit.
+
+Squash, rebase, or cherry-pick integration may not make the worktree HEAD an ancestor of the target branch, so require evidence tying its task-owned change to the accepted integrated revision rather than relying on ancestry alone. If safe removal cannot be proven, do not force it: keep or adopt the worktree with an explicit owner and removal condition and report the blocker. Completion must not leave an ownerless task-created worktree.
 
 ## One final validation
 

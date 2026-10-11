@@ -77,6 +77,8 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
 - A local commit does not authorize publication, merge, deployment, or restart.
 - Every accepted repository change ends in a scoped local commit and an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
+- Before creating a task worktree, inventory and reuse compatible registrations; reconcile a partial creation before retrying instead of creating renamed siblings.
+- At completion, failure, cancellation, supersession, or indefinite block, preserve unique work and remove the task worktree or deliberately adopt it with a live owner and removal condition.
 - Acceptance uses one final validation gate on the exact state intended for adoption.
 - If that state changes, the prior result is stale and is replaced rather than layered with another gate.
 - Runtime must load the accepted configuration, artifact, or revision rather than an accidental scratch or dirty dependency.

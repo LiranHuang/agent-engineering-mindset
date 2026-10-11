@@ -52,9 +52,15 @@ For versioned or runtime-affecting changes, distinguish the admitted baseline, t
 
 For every Git-backed change, treat a clean adoption worktree as a hard terminal invariant. Before the first edit, require an empty `git status --porcelain=v1 --untracked-files=all`. If the intended worktree is dirty, do not add another change: reconcile a clearly owned recovery task or use a clean isolated worktree. Never build on unrelated dirt.
 
+When one task spans a Git-backed owner and an unversioned live file, inventory every writable surface before mutating any of them. A non-Git path does not waive repository preflight: check every enclosing repository first, repair the canonical tracked owner in a clean worktree, and synchronize the live file only from the accepted tracked state. If the canonical repository is dirty or ownership is unresolved, do not edit the live file and create a split state.
+
 Never overwrite, stash, reset, stage, absorb, or clean unrelated changes. If the baseline changes or semantic ownership overlaps, reconcile before acceptance. Runtime-affecting work must identify the real loader or entry path and must not depend on an unintended dirty checkout or untracked mutable file.
 
 Keep generated outputs outside the source worktree or in project-owned ignored locations unless they are deliberate task-owned deliverables. For a completed change, use one final acceptance gate: stage only explicit task-owned paths, inspect and check that exact candidate, create a scoped local commit without changing its tree, and require the porcelain status to be empty before the gate returns PASS. A code-changing task, stage, pause, or handoff is not closed while its worktree contains staged, unstaged, or untracked task output. If work must pause before acceptance, preserve the bounded state in an explicitly unverified checkpoint commit and still leave the worktree clean; never merge or run that checkpoint as accepted. A local commit does not authorize push, merge, deployment, restart, or publication. If an explicit instruction forbids commits, stop before editing because a persistent repository change would conflict with this invariant.
+
+Treat a task-created isolated worktree as temporary execution infrastructure. Before creating one, inventory registered worktrees and the intended branch and path, then reuse a compatible existing worktree instead of creating retry, `verify2`, or `v2` siblings. If creation partially fails, reconcile the exact path, registration, branch or detached revision, and files before retrying; resume the same instance or roll back only proven task-created partial state with no unique work.
+
+At every terminal outcome—integrated completion, failure, cancellation, supersession, or indefinite block—preserve unique work on a named ref or explicit checkpoint when needed, then remove the worktree registration and directory, or deliberately adopt it with a live owner, reason, reference, and removal condition. A bounded pause or handoff may retain it only with a live owner and explicit next-use or removal condition. Integrated acceptance closes the worktree lifecycle within the same final gate. Empty porcelain alone is not worktree closure. Never force cleanup when ownership, unintegrated work, or active use is unresolved.
 
 Read [version, workspace, and runtime integrity](references/version-workspace-runtime.md) before every Git-backed change and whenever handoff, merge, or runtime promotion is involved.
 
@@ -82,6 +88,8 @@ Claim completion only when the main observable outcome is satisfied, the final a
 - the chosen action had the highest reasonable main-goal ROI among safe in-scope options;
 - one canonical implementation path and unambiguous write ownership were preserved;
 - the exact final accepted state passed one proportionate validation gate;
+- every task worktree creation began with an exact registration, branch, and path inventory; compatible worktrees were reused and partial creation failures were reconciled before retry;
 - every Git worktree that received or adopted the task change has empty porcelain status;
+- every task-created isolated worktree was removed at its terminal outcome or deliberately adopted with a live owner, reason, reference, and removal condition;
 - runtime, artifacts, and lifecycle state agree with the accepted outcome;
 - remaining main-goal gaps, risks, or blockers are stated without promoting stage-local success to completion.
