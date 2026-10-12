@@ -33,6 +33,7 @@ continue against remaining main-goal gap or close
 
 - main-goal continuity and measurable stage alignment;
 - ROI-based continuation and rejection of drift or substitute work;
+- low-overhead heartbeat supervision for eligible mechanical long-running stages;
 - canonical ownership and bounded delegation;
 - version, workspace, artifact, and runtime state integrity;
 - proportionate lifecycle and large-resource handling;
@@ -74,6 +75,7 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - A stage goal cannot replace, weaken, or silently broaden the main goal.
 - Stage completion and child PASS do not complete the parent goal.
 - Low-ROI side work and substitute surfaces are rejected.
+- A mechanical long-running stage may use one task-attached heartbeat only when its canonical run, progress markers, and terminal evidence are observable; unchanged checks stay brief, material progress refreshes the heartbeat binding, and terminal state reclaims it.
 - One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
 - A local commit does not authorize publication, merge, deployment, or restart.
 - Every accepted repository change ends in a scoped local commit and an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
@@ -88,6 +90,7 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 ```text
 SKILL.md
 references/stage-anchors-and-continuation.md
+references/heartbeat-supervision.md
 references/version-workspace-runtime.md
 references/artifact-lifecycle.md
 references/approval-and-resource-boundaries.md

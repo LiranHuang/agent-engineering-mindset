@@ -36,6 +36,8 @@ Prefer, in order of actual expected value rather than ceremony:
 
 Reject drift, substitute work, speculative infrastructure, duplicated evidence, and low-ROI side work unless they are necessary prerequisites. Do not optimize a stage metric when doing so lowers total main-goal ROI. For the selected action, know its owner, expected delta, cost or risk, acceptance evidence, stop condition, and approval boundary.
 
+For a mechanical long-running background stage, the parent may attach one host-native heartbeat to the existing task or thread when progress and terminal state are observable and no recurring human judgment is expected. Use it only to supervise the canonical run, update its next-check binding after material progress, and reclaim it at terminal state. Minimize avoidable model usage; do not represent heartbeat turns as free. Read [heartbeat supervision for mechanical long-running tasks](references/heartbeat-supervision.md) before creating or updating such a heartbeat.
+
 ## 3. Keep one canonical implementation path
 
 Change the canonical semantic owner instead of adding a parallel owner, entry point, or fallback. Reuse, repair, consolidate, or retire before creating. Give retained artifacts an owner and cleanup, archival, adoption, or removal condition; keep tiny scratch output task-local and remove it when done.
@@ -86,6 +88,7 @@ Claim completion only when the main observable outcome is satisfied, the final a
 
 - the main goal remained authoritative and the stage goal demonstrably advanced it;
 - the chosen action had the highest reasonable main-goal ROI among safe in-scope options;
+- any heartbeat used for a mechanical long-running stage stayed bound to the canonical run, was updated after material progress, and was reclaimed at terminal state;
 - one canonical implementation path and unambiguous write ownership were preserved;
 - the exact final accepted state passed one proportionate validation gate;
 - every task worktree creation began with an exact registration, branch, and path inventory; compatible worktrees were reused and partial creation failures were reconciled before retry;
