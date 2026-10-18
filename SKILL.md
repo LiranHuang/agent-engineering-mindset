@@ -40,13 +40,15 @@ For a mechanical long-running background stage, the parent may attach one host-n
 
 ## 3. Keep one canonical implementation path
 
-Change the canonical semantic owner instead of adding a parallel owner, entry point, or fallback. Reuse, repair, consolidate, or retire before creating. Give retained artifacts an owner and cleanup, archival, adoption, or removal condition; keep tiny scratch output task-local and remove it when done.
+Change the canonical semantic owner instead of adding a parallel owner, entry point, or fallback. Reuse, repair, consolidate, or retire before creating.
+
+Every project must have exactly one canonical artifact ledger. Resolve and use that ledger before creating or retaining any file or data artifact, including scratch, generated output, caches, logs, archives, datasets, models, and external-drive output. Register the artifact at creation, classify it as `temporary` or `long_term`, and keep its owner, exact location, purpose, lifecycle state, and terminal evidence current. Every temporary entry must name a cleanup deadline, a lifecycle event, and a safety/evidence gate; every long-term entry must name its retention basis, live consumer, review condition, and retirement condition. Reconcile the ledger with the project's declared output roots at task and stage boundaries, remove eligible task-owned temporary artifacts, close their entries with evidence, and treat unregistered filesystem output or missing ledger targets as lifecycle defects. Do not claim cleanup or completion while an overdue temporary entry or unexplained orphan remains. Read [artifact lifecycle](references/artifact-lifecycle.md) for the ledger contract and closure loop.
 
 One writer owns each overlapping semantic surface at a time. Independent writers may work concurrently only on clearly disjoint surfaces with explicit ownership. Preserve unrelated state and stop when ownership, baseline, target surface, or authority is ambiguous.
 
 When delegating, provide the objective, authoritative context, exact writable scope, required deliverable, acceptance evidence, and stop conditions. Child output is evidence; it does not redefine or complete the parent goal.
 
-Read [artifact lifecycle](references/artifact-lifecycle.md) when creating or superseding durable artifacts. Read [approval and resource boundaries](references/approval-and-resource-boundaries.md) only for protected actions or genuinely large-resource work.
+Read [approval and resource boundaries](references/approval-and-resource-boundaries.md) only for protected actions or genuinely large-resource work.
 
 ## 4. Preserve version and runtime integrity
 
@@ -82,7 +84,7 @@ Read [communication and single validation](references/communication-and-verifica
 
 After a stage completes, reassess the remaining main-goal gap and choose the next highest-ROI aligned action. Stage completion, artifact creation, a commit, or child completion is not main-goal completion.
 
-Claim completion only when the main observable outcome is satisfied, the final accepted state passed the single validation gate, unrelated state was preserved, and temporary or superseded entities were cleaned, archived, or adopted. Otherwise continue, hold for a real decision boundary, or report the evidenced blocker.
+Claim completion only when the main observable outcome is satisfied, the final accepted state passed the single validation gate, unrelated state was preserved, and the canonical artifact ledger reconciles with the declared output roots: eligible temporary artifacts are deleted and closed, retained long-term artifacts remain owned, and no overdue or unexplained orphan remains. Otherwise continue, hold for a real decision boundary, or report the evidenced blocker.
 
 ## Completion check
 
@@ -94,5 +96,5 @@ Claim completion only when the main observable outcome is satisfied, the final a
 - every task worktree creation began with an exact registration, branch, and path inventory; compatible worktrees were reused and partial creation failures were reconciled before retry;
 - every Git worktree that received or adopted the task change has empty porcelain status;
 - every task-created isolated worktree was removed at its terminal outcome or deliberately adopted with a live owner, reason, reference, and removal condition;
-- runtime, artifacts, and lifecycle state agree with the accepted outcome;
+- the project's one canonical artifact ledger was reconciled with its declared output roots, and runtime, artifacts, ledger entries, and lifecycle state agree with the accepted outcome;
 - remaining main-goal gaps, risks, or blockers are stated without promoting stage-local success to completion.
