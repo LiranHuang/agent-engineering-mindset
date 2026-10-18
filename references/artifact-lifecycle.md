@@ -62,11 +62,13 @@ Each entry must contain:
 - `references`: source inputs, dependencies, stage anchor, run id, or parent artifact;
 - `terminal_evidence`: initially empty, then the deletion, archival, promotion, or adoption evidence that closes the entry.
 
-A `temporary` entry must additionally record all three cleanup dimensions:
+A `temporary` entry must additionally record exactly one `cleanup_trigger` object. Its `type` is one of:
 
-- `cleanup_deadline`: a time or bounded latest time, including `task_end` when cleanup is immediate;
-- `cleanup_event`: the lifecycle node that makes it eligible, such as validation completion, stage close, replacement acceptance, run failure, cancellation, or timeout;
-- `cleanup_gate`: the evidence and safety threshold that must be true before deletion, such as no active reader, replacement hash accepted, or unique work preserved.
+- `deadline`: a time or bounded latest time, including `task_end` when cleanup is immediate;
+- `event`: a lifecycle transition such as validation completion, stage close, replacement acceptance, run failure, cancellation, or timeout;
+- `gate`: an observable evidence threshold such as no active reader, replacement hash accepted, or unique work preserved.
+
+The trigger also records the exact `value` to evaluate. Choose the single type that is most reliable and least ambiguous for that artifact; do not populate unused trigger types. Normal deletion safety and authority checks still apply, but they are not extra cleanup triggers.
 
 A `long_term` entry must record `retention_basis`, `live_consumer`, `review_condition`, and `retirement_condition`. `long_term` is not permanent by default; it means the project has deliberately adopted the artifact and knows why and when retention will be reconsidered.
 
@@ -74,19 +76,28 @@ A `long_term` entry must record `retention_basis`, `live_consumer`, `review_cond
 
 Use one lifecycle loop:
 
-`resolve ledger -> register at creation -> classify -> update state -> reconcile -> clean or retain -> record terminal evidence`
+`enter project -> resolve ledger -> execute due cleanup -> register new output -> classify -> observe trigger -> execute cleanup -> reconcile -> record terminal evidence`
+
+Cleanup is an active parent duty, not a report. The agent must load and evaluate the ledger:
+
+- on first entry to the project, before creating more output;
+- immediately after an observed event or gate transition relevant to an entry;
+- at task completion, stage transition, failure, cancellation, and replacement acceptance; and
+- before the final user-facing answer.
+
+When a selected trigger is satisfied and the exact artifact is task-owned, inactive, safe to remove, and within current authority, delete it immediately and close the entry with time and evidence. Do not stop at inventorying or recommending the deletion. If a `deadline` lies beyond the active task window, exact-time cleanup requires a live project-owned scheduler or cleanup runner bound in the ledger with observable execution evidence. Without such an executor, the deadline is evaluated on the next agent entry; never claim that the policy text alone provides real-time cleanup.
 
 Reconcile the ledger with the project's declared output roots at task completion, stage transition, failed or cancelled runs, replacement acceptance, and before reporting cleanup or project completion. The reconciliation must establish:
 
 1. every discovered artifact is represented by one live ledger entry or is deleted as owned task-local output;
 2. every live ledger target exists and matches its recorded scope;
-3. every temporary entry whose deadline and event have arrived is deleted once its gate passes;
+3. every temporary entry whose selected trigger is satisfied is deleted once normal safety and authority checks pass;
 4. every deletion, archive, promotion, or adoption is recorded with time and evidence;
 5. no long-term entry lacks a live owner, consumer, review condition, or retirement condition.
 
 An artifact found under a declared output root without a ledger entry is an orphan. Register and adopt it only when ownership, purpose, and retention are proven; otherwise delete it when authority and safety permit. A ledger entry whose target is missing is also a defect: determine whether the artifact was removed, moved, or lost, then close or repair the entry with evidence.
 
-Task-owned temporary output may be removed without a second cleanup approval when its recorded gate passes and no broader destructive authority is required. If deletion is blocked by ownership, active use, permissions, or safety, set the entry to `blocked`, record the exact blocker, next owner, and next cleanup attempt or decision point, and report the incomplete cleanup. Never mark it removed or claim a clean terminal state.
+Task-owned temporary output may be removed without a second cleanup approval when its selected trigger is satisfied and no broader destructive authority is required. If deletion is blocked by ownership, active use, permissions, or safety, set the entry to `blocked`, record the exact blocker, next owner, and next cleanup attempt or decision point, and report the incomplete cleanup. Never mark it removed or claim a clean terminal state.
 
 For Git-backed work, task-created output that appears in `git status --porcelain=v1 --untracked-files=all` must be adopted in the scoped task commit or removed or relocated by its owner before completion, pause, or handoff. An ignored location is acceptable only when the project deliberately owns that output class and the ledger covers it; never add an ignore rule merely to conceal unexplained dirt.
 
