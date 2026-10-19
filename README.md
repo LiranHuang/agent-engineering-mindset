@@ -7,9 +7,9 @@ A deployable OpenClaw skill for keeping repository changes in clean committed wo
 1. What observable user outcome is the authoritative main goal?
 2. How does the current stage measurably advance that goal?
 3. Which safe in-scope next action has the highest expected main-goal ROI?
-4. Are we changing the canonical target with clear ownership?
-5. What exact final state will receive the single acceptance validation?
-6. What remains between a stage-local result and main-goal completion?
+4. What is the adoption mode, target ref, baseline, and integration owner?
+5. What exact adopted state will receive the single acceptance validation?
+6. What remains between a candidate commit and canonical completion?
 
 ## Operating model
 
@@ -22,11 +22,13 @@ highest-ROI aligned next action
     ↓
 canonical owned implementation
     ↓
-final intended state
+candidate commit
+    ↓
+integrated target when required
     ↓
 one proportionate validation gate
     ↓
-continue against remaining main-goal gap or close
+worktree and artifact closure
 ```
 
 ## What it governs
@@ -77,11 +79,13 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - Low-ROI side work and substitute surfaces are rejected.
 - A mechanical long-running stage may use one task-attached heartbeat only when its canonical run, progress markers, and terminal evidence are observable; unchanged checks stay brief, material progress refreshes the heartbeat binding, and terminal state reclaims it.
 - One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
-- A local commit does not authorize publication, merge, deployment, or restart.
-- Every accepted repository change ends in a scoped local commit and an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
+- Every task branch declares `must_integrate`, `research_only`, or `checkpoint_only`, plus its target, baseline, owner, integration owner, and terminal action.
+- A candidate commit is not completion. For `must_integrate`, the designated integration owner must place the exact change on the target before the one final acceptance gate.
+- A local commit does not authorize publication, deployment, restart, or an otherwise unauthorized merge.
+- Every repository change leaves its task worktree with an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
 - Before creating a task worktree, inventory and reuse compatible registrations; reconcile a partial creation before retrying instead of creating renamed siblings.
 - At completion, failure, cancellation, supersession, or indefinite block, preserve unique work and remove the task worktree or deliberately adopt it with a live owner and removal condition.
-- Acceptance uses one final validation gate on the exact state intended for adoption.
+- Acceptance uses one final validation gate on the exact adopted state; branch checks for `must_integrate` are implementation preflight, not another acceptance gate.
 - If that state changes, the prior result is stale and is replaced rather than layered with another gate.
 - Runtime must load the accepted configuration, artifact, or revision rather than an accidental scratch or dirty dependency.
 
@@ -89,12 +93,10 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 
 ```text
 SKILL.md
-references/stage-anchors-and-continuation.md
 references/heartbeat-supervision.md
-references/version-workspace-runtime.md
-references/artifact-lifecycle.md
-references/approval-and-resource-boundaries.md
-references/communication-and-verification.md
+references/state-and-revision-integrity.md
+references/artifact-and-resource-lifecycle.md
+references/verification-and-runtime.md
 ```
 
 ## License

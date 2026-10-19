@@ -47,9 +47,9 @@ Keep usage proportionate:
 - update the heartbeat binding only with current next-check state; and
 - reclaim it immediately when monitoring no longer advances the main goal.
 
-## Example: long-date M2 chunk processing
+## Example: long-range chunk processing
 
-For an L0 M2 materialization that processes a long date range in chunks, the parent can bind one heartbeat to the canonical run, its current chunk, checkpoint, worker/process identity, and terminal manifest. On each wake:
+For a deterministic materialization that processes a long range in chunks, the parent can bind one heartbeat to the canonical run, its current chunk, checkpoint, worker or process identity, and terminal manifest. On each wake:
 
 1. Check the existing run and its actual worker tree plus the current chunk/checkpoint progress.
 2. If the same run is healthy and progress evidence is advancing, do not restart it or create a new run. Update the heartbeat to the new current chunk or checkpoint when that changes the next check, then end the wake.

@@ -1,102 +1,57 @@
 ---
-name: "agent-engineering-mindset"
-description: "Use for any repository code or configuration change and for long-running project work, stage transitions, delegation, merges, and runtime promotion; enforce clean-worktree closure, main-goal alignment, ROI priority, and one final validation gate."
+name: agent-engineering-mindset
+description: Apply evidence, canonical-adoption integrity, and clean-worktree closure to repository code or configuration changes and to nontrivial implementation, repair, migration, and runtime work.
 ---
 
 # Agent Engineering Mindset
 
-Use this skill for any Git-backed code, configuration, test, build, or repository-documentation change, and when project work can drift across stages, agents, revisions, artifacts, or runtime state. It adds goal continuity, ROI discipline, ownership, state integrity, and clean-worktree closure. It does not replace tool policy, approvals, permissions, or project-specific rules.
+Use for any Git-backed code, configuration, test, build, or repository-documentation change, and for nontrivial technical work when continuation, a changed baseline, a candidate revision, generated artifacts, or runtime promotion could make a plausible result misleading. It adds engineering evidence, state consistency, and clean-worktree closure; it does not own or redefine the host's delegation, approval, Goal, worktree, task, thread, automation, permission, or notification flows. Follow those facilities and applicable `AGENTS.md` instructions.
 
-## 1. Anchor the main goal and current stage
+## Establish the true change surface
 
-Treat the user's observable end state as the authoritative main goal. Use a native active goal when one exists; otherwise use the current user request and authoritative project evidence. Do not create a second goal store merely to satisfy this skill.
+Before a consequential mutation or acceptance decision, identify from current evidence:
 
-Define the current stage goal as the smallest measurable outcome that is necessary for the main goal. Record or resolve, only as needed:
+- the authoritative objective, canonical semantic owner, and authoritative inputs;
+- the intended target surface and adjacent surfaces that must not substitute for it;
+- the admitted baseline, task-owned delta or candidate revision when version control applies; and
+- the required observable acceptance evidence and terminal state.
 
-- the main goal and completion evidence;
-- the current stage goal and how it advances the main goal;
-- non-goals and forbidden substitute surfaces;
-- the canonical source, data, configuration, artifact, and runtime owners;
-- the admitted baseline, active writer, intended final state, and decision boundaries.
+Use project-owned records when they exist. Do not create a parallel tracking system merely to satisfy this skill. Preserve unrelated changes and do not treat chat summaries, a clean diff, or a prior report as proof of current state.
 
-A stage goal may narrow execution but must not replace, weaken, or silently broaden the main goal. A blocker, child deliverable, local PASS, new request, or convenient substitute does not become the main goal automatically. Put out-of-stage work in backlog or request an explicit goal or stage change.
+Re-ground from the real repository, configuration, artifact, or runtime state after compaction, resume, handoff, model change, a child result, a new requirement, or any other transition that may have changed ownership or baseline. Hold the affected mutation when the target, owner, baseline, candidate, or acceptance evidence cannot be re-proven. Read [state and revision integrity](references/state-and-revision-integrity.md) when the work has a mutable baseline, handoff, candidate revision, or merge boundary.
 
-Use a durable project-owned stage anchor only when work spans turns, agents, revisions, or a material stage boundary. For short work, keep the anchor in the active task context instead of creating a ledger. Read [stage anchors and continuation](references/stage-anchors-and-continuation.md) when durable continuation state is required.
+For every Git-backed change, read [state and revision integrity](references/state-and-revision-integrity.md) before the first edit. Start from an empty `git status --porcelain=v1 --untracked-files=all` in the worktree that will receive the change. If it is dirty, do not add another change: reconcile a clearly owned recovery task or use a clean isolated worktree. Never build on unrelated dirt.
 
-## 2. Choose the highest-ROI aligned next action
+## Keep one evidenced implementation path
 
-Consider only actions that are safe, authorized, and consistent with the main goal. Compare candidate actions by their expected main-goal progress against total time, compute, coordination cost, operational risk, and future rework. Exact numeric scoring is optional; the ranking and reason must be clear.
+Repair or extend the canonical semantic owner rather than introducing a second owner, entry point, or unbounded fallback. Prefer reuse, repair, consolidation, and retirement before creation.
 
-Prefer, in order of actual expected value rather than ceremony:
+Every project must have exactly one canonical artifact ledger. Resolve and use it before creating or retaining any file or data artifact, including scratch, generated output, caches, logs, archives, datasets, models, and external-drive output. Register each artifact at creation, classify it as `temporary` or `long_term`, and keep its owner, exact location, purpose, lifecycle state, and terminal evidence current. Every temporary entry defines exactly one `cleanup_trigger`—`deadline`, `event`, or `gate`—chosen for the most reliable observable transition; every long-term entry names its retention basis, live consumer, review condition, and retirement condition.
 
-1. direct progress on the true target surface;
-2. a bounded unblocker required for direct progress;
-3. risk reduction that protects likely progress;
-4. evidence or cleanup required for acceptance or safe continuation.
+Cleanup is required execution, not passive bookkeeping. On first project entry, after a relevant trigger transition, at task or stage termination, and before the final answer, read the ledger, evaluate task-owned entries and other entries whose triggers are now due and safely actionable, immediately remove eligible artifacts within current authority, and record terminal evidence. Do not merely list cleanup candidates. Reconcile the task-owned artifact set and the exact roots it changed. Record inherited project-wide inventory gaps as explicit lifecycle debt with an owner and next review point; they block this task only when they make its ownership, safety, final state, or acceptance evidence ambiguous. A future deadline provides exact-time cleanup only when a live project-owned scheduler or cleanup runner is bound to it; otherwise it is cleaned on the next responsible agent entry and must not be represented as real-time automation. Do not claim cleanup or completion while an eligible task-owned temporary entry, a due actionable entry accepted by this task, or an orphan created by this task remains.
 
-Reject drift, substitute work, speculative infrastructure, duplicated evidence, and low-ROI side work unless they are necessary prerequisites. Do not optimize a stage metric when doing so lowers total main-goal ROI. For the selected action, know its owner, expected delta, cost or risk, acceptance evidence, stop condition, and approval boundary.
+Keep project identity and storage policy outside this skill. Do not embed a project name, repository path, drive or mount, business-layer name, output root, branch name, scheduler name, or project-specific cleanup destination in the skill or its generic examples. Resolve those values only from the active project's instructions, canonical configuration, ledger, or current user request. The skill defines invariants; each project defines its concrete names and locations.
+
+For large-I/O work, define a proportionate resource envelope before reading or writing: bounded input/output, streaming or chunking strategy, concurrency, spill location, reusable partial progress, and a stop condition. Do not impose that overhead on ordinary small work. Read [artifact and resource lifecycle](references/artifact-and-resource-lifecycle.md) when creating or retaining artifacts, replacing an existing artifact, reconciling the project ledger, or handling large resources.
 
 For a mechanical long-running background stage, the parent may attach one host-native heartbeat to the existing task or thread when progress and terminal state are observable and no recurring human judgment is expected. Use it only to supervise the canonical run, update its next-check binding after material progress, and reclaim it at terminal state. Minimize avoidable model usage; do not represent heartbeat turns as free. Read [heartbeat supervision for mechanical long-running tasks](references/heartbeat-supervision.md) before creating or updating such a heartbeat.
 
-## 3. Keep one canonical implementation path
+Keep generated outputs outside the source worktree or in project-owned ignored locations unless they are deliberate task-owned deliverables. An unignored generated file is repository dirt and blocks closure until it is adopted in the task commit or removed or relocated by its owner.
 
-Change the canonical semantic owner instead of adding a parallel owner, entry point, or fallback. Reuse, repair, consolidate, or retire before creating.
+## Bind verification to the thing that changed
 
-Every project must have exactly one canonical artifact ledger. Resolve and use that ledger before creating or retaining any file or data artifact, including scratch, generated output, caches, logs, archives, datasets, models, and external-drive output. Register the artifact at creation, classify it as `temporary` or `long_term`, and keep its owner, exact location, purpose, lifecycle state, and terminal evidence current. Every temporary entry must define exactly one cleanup trigger—`deadline`, `event`, or `gate`—chosen for the most reliable observable transition; every long-term entry must name its retention basis, live consumer, review condition, and retirement condition.
+For each task-created branch or worktree, establish an adoption contract before mutation: `adoption_mode` (`must_integrate`, `research_only`, or `checkpoint_only`), exact `target_ref` when integration is intended, `baseline_sha`, live owner, integration owner, and terminal action. A `must_integrate` task is not complete while its accepted change exists only on a task branch. A `research_only` or `checkpoint_only` task must not be merged merely to make cleanup easier.
 
-Cleanup is required execution, not passive bookkeeping. On first project entry, after a relevant trigger transition, at task or stage termination, and before the final answer, read the ledger, evaluate temporary entries, immediately remove eligible task-owned artifacts within current authority, and record terminal evidence. Do not merely list cleanup candidates. Reconcile the ledger with the project's declared output roots at task and stage boundaries, and treat unregistered filesystem output or missing ledger targets as lifecycle defects. A future deadline can provide exact-time cleanup only when a live project-owned scheduler or cleanup runner is bound to it; otherwise it is cleaned on the next agent entry and must not be represented as real-time automation. Do not claim cleanup or completion while an eligible temporary entry or unexplained orphan remains. Read [artifact lifecycle](references/artifact-lifecycle.md) for the ledger contract and execution loop.
+Bind acceptance evidence to the exact state being adopted, plus the admitted baseline where relevant. A passing branch or isolated workspace is implementation evidence only when `adoption_mode=must_integrate`; the single acceptance gate occurs on the integrated target state. Pre-integration tests may guide implementation, but they are not an additional acceptance decision and cannot justify completion.
 
-One writer owns each overlapping semantic surface at a time. Independent writers may work concurrently only on clearly disjoint surfaces with explicit ownership. Preserve unrelated state and stop when ownership, baseline, target surface, or authority is ambiguous.
+For a runtime-affecting change, verify the real loader or entry path is using the intended revision or configuration, then check the relevant health or behavior. A successful build, local edit, or substitute-path test is insufficient if a stale process, configuration, artifact, or checkout can still be loaded.
 
-When delegating, provide the objective, authoritative context, exact writable scope, required deliverable, acceptance evidence, and stop conditions. Child output is evidence; it does not redefine or complete the parent goal.
+Fail closed on a material drift signal: ambiguous ownership, changed authoritative input, baseline mismatch, candidate/evidence mismatch, overlapping semantic change, target-surface substitution, or a runtime that cannot be tied to the verified result. Preserve evidence and return the discrepancy instead of papering over it with cleanup or a parallel path. Read [verification and runtime](references/verification-and-runtime.md) for integration, versioned candidates, runtime loading, or high-consequence acceptance.
 
-Read [approval and resource boundaries](references/approval-and-resource-boundaries.md) only for protected actions or genuinely large-resource work.
+For a completed Git-backed change, stage only explicit task-owned paths, inspect the exact staged candidate, create a scoped candidate commit, and require empty full porcelain status. For `must_integrate`, the designated integration owner then integrates that exact candidate into `target_ref` using the authorized project workflow; only the resulting target state receives the single final acceptance gate. A code-changing task, stage, pause, or handoff is not closed while its worktree has staged, unstaged, or untracked task output. If work must pause before acceptance, preserve the bounded task state in an explicitly unverified checkpoint commit and still leave the worktree clean; never merge or run that checkpoint as an accepted revision. A local commit alone does not authorize push, deployment, restart, publication, or an otherwise unauthorized merge. If local integration is outside current authority, return `integration_pending` or the applicable blocked state to the user or owning parent; never report the implementation task complete. If an explicit instruction forbids commits, stop before editing because a persistent repository change would conflict with the clean-worktree invariant.
 
-## 4. Preserve version and runtime integrity
+Treat a task-created isolated worktree as temporary execution infrastructure, not as a completed deliverable. Before creating one, inventory registered worktrees and the intended branch and path, then reuse a compatible existing worktree instead of creating retry, `verify2`, or `v2` siblings. A `must_integrate` worktree starts from its declared target baseline; do not stack it on an unintegrated task branch unless the adoption contract declares that dependency, integration order, and common integration owner. If creation partially fails, reconcile the exact path, registration, branch or detached revision, and files before retrying; resume the same instance or roll back only proven task-created partial state with no unique work.
 
-For versioned or runtime-affecting changes, distinguish the admitted baseline, task-owned change, intended final integrated state, and loaded runtime state. Use an isolated worktree when concurrent work, merge risk, or repository policy justifies it; do not impose one on a small uncontested edit.
+At every terminal outcome—integrated completion, failure, cancellation, supersession, or indefinite block—preserve unique work on a named ref or explicit checkpoint when needed, then remove the worktree registration and directory, or deliberately adopt it with a stable owner identity, reason, reference, and concrete next-use or removal condition. A bounded pause or handoff may retain it only with that durable binding; `idle`, `not loaded`, a chat title, or the word "current" is not a live owner. Before marking a Goal or task complete, make one terminal decision that confirms the adoption contract, patch-equivalent integration when required, final target validation, clean target and task worktrees, ledger transition, and worktree removal or deliberate adoption. This is the closure portion of the single final gate, not a second validation layer. Empty porcelain alone is not worktree closure. Follow [state and revision integrity](references/state-and-revision-integrity.md) and never force cleanup when ownership, unintegrated work, or active use is unresolved.
 
-For every Git-backed change, treat a clean adoption worktree as a hard terminal invariant. Before the first edit, require an empty `git status --porcelain=v1 --untracked-files=all`. If the intended worktree is dirty, do not add another change: reconcile a clearly owned recovery task or use a clean isolated worktree. Never build on unrelated dirt.
-
-When one task spans a Git-backed owner and an unversioned live file, inventory every writable surface before mutating any of them. A non-Git path does not waive repository preflight: check every enclosing repository first, repair the canonical tracked owner in a clean worktree, and synchronize the live file only from the accepted tracked state. If the canonical repository is dirty or ownership is unresolved, do not edit the live file and create a split state.
-
-Never overwrite, stash, reset, stage, absorb, or clean unrelated changes. If the baseline changes or semantic ownership overlaps, reconcile before acceptance. Runtime-affecting work must identify the real loader or entry path and must not depend on an unintended dirty checkout or untracked mutable file.
-
-Keep generated outputs outside the source worktree or in project-owned ignored locations unless they are deliberate task-owned deliverables. For a completed change, use one final acceptance gate: stage only explicit task-owned paths, inspect and check that exact candidate, create a scoped local commit without changing its tree, and require the porcelain status to be empty before the gate returns PASS. A code-changing task, stage, pause, or handoff is not closed while its worktree contains staged, unstaged, or untracked task output. If work must pause before acceptance, preserve the bounded state in an explicitly unverified checkpoint commit and still leave the worktree clean; never merge or run that checkpoint as accepted. A local commit does not authorize push, merge, deployment, restart, or publication. If an explicit instruction forbids commits, stop before editing because a persistent repository change would conflict with this invariant.
-
-Treat a task-created isolated worktree as temporary execution infrastructure. Before creating one, inventory registered worktrees and the intended branch and path, then reuse a compatible existing worktree instead of creating retry, `verify2`, or `v2` siblings. If creation partially fails, reconcile the exact path, registration, branch or detached revision, and files before retrying; resume the same instance or roll back only proven task-created partial state with no unique work.
-
-At every terminal outcome—integrated completion, failure, cancellation, supersession, or indefinite block—preserve unique work on a named ref or explicit checkpoint when needed, then remove the worktree registration and directory, or deliberately adopt it with a live owner, reason, reference, and removal condition. A bounded pause or handoff may retain it only with a live owner and explicit next-use or removal condition. Integrated acceptance closes the worktree lifecycle within the same final gate. Empty porcelain alone is not worktree closure. Never force cleanup when ownership, unintegrated work, or active use is unresolved.
-
-Read [version, workspace, and runtime integrity](references/version-workspace-runtime.md) before every Git-backed change and whenever handoff, merge, or runtime promotion is involved.
-
-## 5. Use one final validation gate
-
-Every change has exactly one acceptance gate, performed after the change reaches the final state intended for adoption. The gate may contain several proportionate checks, but they form one validation pass and one acceptance decision.
-
-Bind that validation to the exact final state: the task-owned diff, candidate revision, merged revision, generated artifact, configuration, or loaded runtime actually being accepted. Choose the smallest meaningful evidence set, such as the real positive entry path, targeted tests, an absence or negative check for retired behavior, and runtime health when runtime changed.
-
-Do not require a task-branch PASS, a separate independent verifier PASS, and a second merged-tree PASS as cumulative gates. When integration changes the accepted state, validate the final integrated state once. An independent verifier may perform this single gate when risk or project policy warrants it, but it is not an additional mandatory layer.
-
-If the accepted state changes after validation, the result becomes stale. Replace it with one new final validation; do not accumulate validation layers. On failure, return to the same owned implementation path, repair it, and run the single final gate again.
-
-Read [communication and single validation](references/communication-and-verification.md) when defining or reporting acceptance evidence.
-
-## 6. Continue or close against the main goal
-
-After a stage completes, reassess the remaining main-goal gap and choose the next highest-ROI aligned action. Stage completion, artifact creation, a commit, or child completion is not main-goal completion.
-
-Claim completion only when the main observable outcome is satisfied, the final accepted state passed the single validation gate, unrelated state was preserved, and the canonical artifact ledger reconciles with the declared output roots: eligible temporary artifacts are deleted and closed, retained long-term artifacts remain owned, and no eligible temporary entry or unexplained orphan remains. Otherwise continue, hold for a real decision boundary, or report the evidenced blocker.
-
-## Completion check
-
-- the main goal remained authoritative and the stage goal demonstrably advanced it;
-- the chosen action had the highest reasonable main-goal ROI among safe in-scope options;
-- any heartbeat used for a mechanical long-running stage stayed bound to the canonical run, was updated after material progress, and was reclaimed at terminal state;
-- one canonical implementation path and unambiguous write ownership were preserved;
-- the exact final accepted state passed one proportionate validation gate;
-- every task worktree creation began with an exact registration, branch, and path inventory; compatible worktrees were reused and partial creation failures were reconciled before retry;
-- every Git worktree that received or adopted the task change has empty porcelain status;
-- every task-created isolated worktree was removed at its terminal outcome or deliberately adopted with a live owner, reason, reference, and removal condition;
-- the project's one canonical artifact ledger was reconciled with its declared output roots, and runtime, artifacts, ledger entries, and lifecycle state agree with the accepted outcome;
-- remaining main-goal gaps, risks, or blockers are stated without promoting stage-local success to completion.
+Any heartbeat used for the task remains parent-owned lifecycle state: keep it bound to the canonical run, refresh its current next-check state after material progress, and remove or disable it at terminal success, failure, cancellation, supersession, or a decision blocker unless an explicitly authorized recovery still has a live owner.
