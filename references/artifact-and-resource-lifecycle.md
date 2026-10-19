@@ -34,4 +34,3 @@ For work on large datasets, logs, media, model artifacts, browser traces, mounte
 - reusable partial-progress information and a safe stop condition.
 
 Prefer the smallest resource use that can answer the question. If pressure appears, stop with reusable progress rather than clearing caches, terminating unrelated processes, or treating disruptive recovery as routine. Small local edits do not need a formal envelope.
-

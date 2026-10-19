@@ -94,4 +94,3 @@ An isolated workspace can protect a change while it is developed, but it is not 
 ## Preserve ownership boundaries
 
 Do not overwrite, reset, stage, absorb, or clean changes whose ownership is unclear or outside the approved change. Keep generated output out of source surfaces unless the project explicitly owns it. If mutable work has an assigned writer, do not create a competing write line to accelerate, replace, or repair it; use the host and applicable project rules to resolve ownership.
-

@@ -19,4 +19,3 @@ For `research_only` or `checkpoint_only`, do not merge merely to satisfy a gener
 When a change affects runtime behavior, identify the real loader or entry path and verify it uses the intended integrated revision, configuration, or artifact. Then check the relevant health and behavior. Look for loaders, configuration precedence, generated copies, long-lived processes, and other paths that could retain stale behavior.
 
 Do not claim runtime success from source-tree state alone. If the loaded revision or configuration cannot be determined, report that limit and do not promote a local result into runtime acceptance.
-
