@@ -4,15 +4,24 @@ Use this reference when a change crosses a context boundary, has a mutable basel
 
 ## Clean-worktree invariant
 
-For a Git-backed code, configuration, test, build, or repository-documentation change, use this state model:
+For a Git-backed code, configuration, test, build, or repository-documentation change, select one execution workspace before mutation and use its state model:
 
-`clean admitted baseline -> bounded task-owned change -> exact staged candidate -> scoped candidate commit -> integrated target when required -> one final gate -> clean closed worktree lifecycle`
+- `direct_target`: `clean admitted target baseline -> bounded task-owned change -> exact staged candidate -> scoped target commit -> one final gate -> clean target checkout`;
+- `isolated_worktree`: `clean admitted baseline -> bounded task-owned change -> exact staged candidate -> scoped candidate commit -> integrated target -> one final gate -> clean closed worktree lifecycle`.
 
 During an active edit the worktree may be temporarily dirty. That dirt must not survive completion, a stage transition, a pause, or a handoff. The worktree that receives and adopts the change is clean only when `git status --porcelain=v1 --untracked-files=all` returns no records, including staged, unstaged, untracked, and submodule state.
 
+## Choose the execution workspace
+
+Inspect the canonical target checkout before creating any task worktree: exact ref and baseline, full porcelain status, registered worktrees, assigned write owners, and active processes or locks capable of mutating that checkout or an overlapping semantic surface.
+
+Use `direct_target` by default. When the canonical target checkout is clean, attached to the intended target branch at the admitted baseline, has no other active writer, mutating process, or lock on the checkout or overlapping semantic surface, and project policy does not require isolation, do not create a task worktree. Make the bounded change, stage exact paths, commit, validate, and close in that checkout. An inactive registered worktree, idle chat, or clean unrelated checkout does not by itself occupy the target.
+
+Use or reuse an `isolated_worktree` only when direct target mutation is blocked by unrelated dirt, a real concurrent or overlapping writer, an active mutating process or lock, explicit handoff or merge isolation, material merge risk, or repository policy. Record that concrete reason before creation; convenience, habit, or a generic retry is not sufficient.
+
 ## Adoption contract
 
-Before mutating a task branch or creating an isolated worktree, bind the work to one adoption mode:
+Before mutating the selected checkout, bind both its execution workspace and one adoption mode:
 
 - `must_integrate`: the requested repository change must reach an exact canonical `target_ref`;
 - `research_only`: the branch or artifact is the intended bounded deliverable and must not alter the canonical target; or
@@ -20,37 +29,41 @@ Before mutating a task branch or creating an isolated worktree, bind the work to
 
 Record or otherwise make inspectable the exact `target_ref` when applicable, `baseline_sha`, stable task or owner identity, integration owner, candidate reference, terminal action, and next-use or removal condition. A title, the word `current`, or an idle/not-loaded session state is not a durable owner identity.
 
-For `must_integrate`, use this terminal state machine:
+For `must_integrate`, use the workspace-specific terminal state machine:
 
-`created -> active -> candidate_committed -> integrated_target -> final_gate_passed -> worktree_removed_or_deliberately_adopted`
+- `direct_target`: `created -> active -> committed_on_target -> final_gate_passed -> target_clean`;
+- `isolated_worktree`: `created -> active -> candidate_committed -> integrated_target -> final_gate_passed -> worktree_removed_or_deliberately_adopted`.
 
-Do not skip from `candidate_committed` to task or Goal completion. If integration is outside current authority, preserve the clean candidate and report `integration_pending` or the applicable blocked state to the owning parent or user. Do not silently reinterpret it as `research_only`.
+Do not skip from either committed state to task or Goal completion. In `direct_target`, the committed target still requires the single final gate and clean closure. In `isolated_worktree`, if integration is outside current authority, preserve the clean candidate and report `integration_pending` or the applicable blocked state to the owning parent or user. Do not silently reinterpret it as `research_only`.
 
 Before the first edit:
 
-- identify the repository root, branch or detached revision, intended adoption worktree, and exact baseline;
+- identify the repository root, branch or detached revision, selected execution workspace, and exact baseline;
 - run the full porcelain status check and classify every existing record by owner;
-- do not edit a dirty adoption worktree or mix with pre-existing state; use a clean isolated branch or worktree when the existing dirt is outside the task;
+- inspect registered worktrees, assigned writers, and active mutating processes or locks before deciding that the canonical target is occupied;
+- do not edit a dirty adoption checkout or mix with pre-existing state; use a clean isolated branch or worktree when existing dirt is outside the task;
 - if cleaning or recovering the dirty state is itself the authorized task, inventory it first and change only proven task-owned paths.
 
-For candidate closure before integration:
+For candidate or target closure:
 
 - keep generated output outside the source worktree or in an intentional ignored location unless it is an adopted deliverable;
 - stage explicit task-owned paths and inspect the staged diff; do not use broad staging that could absorb unrelated state;
 - run whatever bounded implementation checks are needed to produce a credible candidate, then create a scoped local commit;
 - verify the commit contains only the candidate and require empty full porcelain status; and
-- do not call these development checks the final acceptance gate when `adoption_mode=must_integrate`.
+- in `direct_target`, treat the resulting scoped commit as the integrated target revision and run the single final gate there; and
+- in an isolated `must_integrate` workspace, do not call development checks the final acceptance gate.
 
-For `must_integrate`, the designated integration owner integrates the exact candidate into `target_ref`, inspects the resulting canonical delta, and performs the one final acceptance gate there. Confirm both target and task worktrees are clean as part of the same terminal decision. Candidate checks are preflight evidence, not a second acceptance layer.
+For an isolated `must_integrate` workspace, the designated integration owner integrates the exact candidate into `target_ref`, inspects the resulting canonical delta, and performs the one final acceptance gate there. Confirm both target and task worktrees are clean as part of the same terminal decision. Candidate checks are preflight evidence, not a second acceptance layer. For `direct_target`, confirm the committed target checkout is clean and validate that exact revision; there is no separate integration step or temporary worktree to close.
 
 If work must pause before acceptance, create an explicitly unverified task-only checkpoint commit so the worktree is clean. It may be continued on the same owned line but must not be merged, deployed, or treated as accepted. A local commit never authorizes push, publication, deployment, restart, or an otherwise unauthorized merge. When the user's requested repository change and project workflow already authorize local integration, the named integration owner must perform it rather than treating the candidate commit as the terminal deliverable. If commits are explicitly prohibited, stop before mutation and surface the conflict instead of deliberately leaving a persistent dirty change.
 
 ## Isolated worktree lifecycle
 
-A task-created isolated worktree is temporary execution infrastructure unless the project deliberately adopts it with a live owner, reason, reference, and removal condition. A clean status does not by itself close that lifecycle.
+A task-created isolated worktree is exceptional temporary execution infrastructure, not the default workspace, unless the project deliberately adopts it with a live owner, reason, reference, and removal condition. A clean status does not by itself close that lifecycle.
 
 Before creating one:
 
+- record the exact evidence that made `direct_target` unavailable or made isolation mandatory;
 - enumerate current registrations with `git worktree list --porcelain` and inspect the intended branch, revision, and exact path;
 - reuse a compatible existing task worktree; do not create renamed retry, `verify2`, or `v2` siblings merely because setup, checkout, or validation failed;
 - define its adoption mode, target ref when applicable, baseline revision, stable owner, integration owner, purpose, and terminal removal or adoption condition;
@@ -69,7 +82,7 @@ At any other terminal outcome, including failure, cancellation, supersession, or
 
 Squash, rebase, or cherry-pick integration may not make the worktree HEAD an ancestor of the target branch, so require evidence tying its task-owned change to the accepted integrated revision rather than relying on ancestry alone. If safe removal cannot be proven, do not force it: keep or adopt the worktree with an explicit owner and removal condition and report the blocker. Completion must not leave an ownerless task-created worktree.
 
-Before a task or Goal is marked complete, make one terminal decision over the adoption contract: required patch-equivalent integration exists on the target, the final target state passed the single gate, target and task worktrees are clean, lifecycle records agree, and the task worktree is removed or deliberately adopted. This terminal decision bundles acceptance and lifecycle closure; it is not another validation pass.
+Before a task or Goal is marked complete, make one terminal decision over the adoption contract: the exact target revision contains the required change, the final target state passed the single gate, all selected checkouts are clean, lifecycle records agree, and any task-created worktree is removed or deliberately adopted. This terminal decision bundles acceptance and lifecycle closure; it is not another validation pass.
 
 ## Re-ground from authoritative state
 

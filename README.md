@@ -1,13 +1,13 @@
 # Agent Engineering Mindset
 
-A deployable OpenClaw skill for keeping repository changes in clean committed worktrees while long-running engineering work remains anchored to one main goal, aligned through necessary stages, prioritized by total-goal ROI, and accepted through one final validation gate.
+A deployable OpenClaw skill for keeping repository changes in clean committed checkouts while long-running engineering work remains anchored to one main goal, aligned through necessary stages, prioritized by total-goal ROI, and accepted through one final validation gate. It edits the clean unoccupied canonical target directly by default and creates an isolated worktree only when evidence or project policy requires isolation.
 
 ## Core questions
 
 1. What observable user outcome is the authoritative main goal?
 2. How does the current stage measurably advance that goal?
 3. Which safe in-scope next action has the highest expected main-goal ROI?
-4. What is the adoption mode, target ref, baseline, and integration owner?
+4. Is the canonical target checkout genuinely occupied, and what execution workspace, adoption mode, target ref, baseline, and integration owner apply?
 5. What exact adopted state will receive the single acceptance validation?
 6. What remains between a candidate commit and canonical completion?
 
@@ -79,11 +79,12 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - Low-ROI side work and substitute surfaces are rejected.
 - A mechanical long-running stage may use one task-attached heartbeat only when its canonical run, progress markers, and terminal evidence are observable; unchanged checks stay brief, material progress refreshes the heartbeat binding, and terminal state reclaims it.
 - One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
-- Every task branch declares `must_integrate`, `research_only`, or `checkpoint_only`, plus its target, baseline, owner, integration owner, and terminal action.
+- Before mutation, inspect the canonical target checkout, worktree registrations, writers, and mutating processes or locks; if the target is clean and unoccupied and policy does not require isolation, edit and commit there instead of creating a task worktree.
+- Every selected checkout declares `direct_target` or `isolated_worktree` plus `must_integrate`, `research_only`, or `checkpoint_only`, its target, baseline, owner, integration owner, and terminal action.
 - A candidate commit is not completion. For `must_integrate`, the designated integration owner must place the exact change on the target before the one final acceptance gate.
 - A local commit does not authorize publication, deployment, restart, or an otherwise unauthorized merge.
-- Every repository change leaves its task worktree with an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
-- Before creating a task worktree, inventory and reuse compatible registrations; reconcile a partial creation before retrying instead of creating renamed siblings.
+- Every repository change leaves each selected checkout with an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
+- Create or reuse a task worktree only for evidenced isolation needs; inventory and reuse compatible registrations, and reconcile a partial creation before retrying instead of creating renamed siblings.
 - At completion, failure, cancellation, supersession, or indefinite block, preserve unique work and remove the task worktree or deliberately adopt it with a live owner and removal condition.
 - Acceptance uses one final validation gate on the exact adopted state; branch checks for `must_integrate` are implementation preflight, not another acceptance gate.
 - If that state changes, the prior result is stale and is replaced rather than layered with another gate.
