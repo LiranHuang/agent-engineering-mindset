@@ -1,6 +1,6 @@
 ---
 name: agent-engineering-mindset
-description: Apply evidence, canonical-adoption integrity, and clean-worktree closure to repository code or configuration changes and to nontrivial implementation, repair, migration, and runtime work.
+description: Apply mandatory independent audit, evidence, canonical-adoption integrity, and clean-worktree closure to repository changes and nontrivial implementation, repair, optimization, migration, and runtime work.
 ---
 
 # Agent Engineering Mindset
@@ -21,6 +21,14 @@ Use project-owned records when they exist. Do not create a parallel tracking sys
 Re-ground from the real repository, configuration, artifact, or runtime state after compaction, resume, handoff, model change, a child result, a new requirement, or any other transition that may have changed ownership or baseline. Hold the affected mutation when the target, owner, baseline, candidate, or acceptance evidence cannot be re-proven. Read [state and revision integrity](references/state-and-revision-integrity.md) when the work has a mutable baseline, handoff, candidate revision, or merge boundary.
 
 For every Git-backed change, read [state and revision integrity](references/state-and-revision-integrity.md) before the first edit. Start from an empty `git status --porcelain=v1 --untracked-files=all` in the worktree that will receive the change. If it is dirty, do not add another change: reconcile a clearly owned recovery task or use a clean isolated worktree. Never build on unrelated dirt.
+
+## Require one independent audit child
+
+When the active parent will execute a development, repair, optimization, refactor, migration, or any other task that creates a persistent change to code, configuration, tests, build or deployment logic, prompts or policies, schemas, repository documentation, or a loaded runtime, activate exactly one independent read-only audit child before the first mutation. Use the host's stable verifier or audit role when available. The child receives no implementation ownership and may not edit the product, candidate, configuration, runtime, or policy it audits.
+
+Brief the audit child with the objective, admitted baseline, canonical owner, allowed and forbidden scope, intended adoption path, and final acceptance boundary. It may inspect the current surface while the parent implements. Before acceptance, bind its verdict to the exact final adopted revision or bounded diff and the single evidence bundle. Treat `PASS`, `FAIL`, or `BLOCKED` as evidence inside the parent's one final acceptance decision, not as an additional gate. The parent owns remediation, integration, and the final claim.
+
+If no independent audit child can be activated, do not start the mutation. If it becomes unavailable after mutation, preserve a clean explicitly unaccepted checkpoint and do not claim completion until the exact final state is audited. An audit `BLOCKED` or inability to inspect that state blocks acceptance. An audit `FAIL` returns work to the same canonical implementation path for repair; after the state changes, replace the stale verdict with one audit of the new final state and rerun the single final gate. Read-only diagnosis, explanation, research, status reporting, and other work with no persistent change do not trigger this requirement.
 
 ## Keep one evidenced implementation path
 
@@ -48,7 +56,7 @@ Before mutation, inspect the canonical target checkout's exact ref and baseline,
 
 Use or reuse `workspace_mode=isolated_worktree` only when direct target mutation is blocked by unrelated dirt, real concurrent or overlapping ownership, an active mutating process or lock, explicit handoff or merge isolation, material merge risk, or repository policy. For the selected workspace, establish an adoption contract before mutation: `adoption_mode` (`must_integrate`, `research_only`, or `checkpoint_only`), exact `target_ref` when integration is intended, `baseline_sha`, live owner, integration owner, and terminal action. A `must_integrate` task is not complete while its accepted change exists only on a task branch. A `research_only` or `checkpoint_only` task must not be merged merely to make cleanup easier.
 
-Bind acceptance evidence to the exact state being adopted, plus the admitted baseline where relevant. In `direct_target`, the scoped commit already is the integrated target revision and receives the single final gate there. A passing branch or isolated workspace is implementation evidence only when `adoption_mode=must_integrate`; its single acceptance gate occurs after the exact candidate reaches the target. Pre-integration tests may guide implementation, but they are not an additional acceptance decision and cannot justify completion.
+Bind acceptance evidence to the exact state being adopted, plus the admitted baseline where relevant. In `direct_target`, the scoped commit already is the integrated target revision and receives the single final gate there. A passing branch or isolated workspace is implementation evidence only when `adoption_mode=must_integrate`; its single acceptance gate occurs after the exact candidate reaches the target. For a parent-executed persistent change, include the audit child's verdict on that exact state in the same evidence bundle. Pre-integration tests and earlier audit observations may guide implementation, but they are not additional acceptance decisions and cannot justify completion.
 
 For a runtime-affecting change, verify the real loader or entry path is using the intended revision or configuration, then check the relevant health or behavior. A successful build, local edit, or substitute-path test is insufficient if a stale process, configuration, artifact, or checkout can still be loaded.
 

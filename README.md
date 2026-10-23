@@ -1,6 +1,6 @@
 # Agent Engineering Mindset
 
-A deployable OpenClaw skill for keeping repository changes in clean committed checkouts while long-running engineering work remains anchored to one main goal, aligned through necessary stages, prioritized by total-goal ROI, and accepted through one final validation gate. It edits the clean unoccupied canonical target directly by default and creates an isolated worktree only when evidence or project policy requires isolation.
+A deployable OpenClaw skill for requiring one independent read-only audit child on parent-executed persistent changes, keeping repository changes in clean committed checkouts, and anchoring long-running engineering work to one main goal, necessary stages, total-goal ROI, and one final validation gate. It edits the clean unoccupied canonical target directly by default and creates an isolated worktree only when evidence or project policy requires isolation.
 
 ## Core questions
 
@@ -79,6 +79,7 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - Low-ROI side work and substitute surfaces are rejected.
 - A mechanical long-running stage may use one task-attached heartbeat only when its canonical run, progress markers, and terminal evidence are observable; unchanged checks stay brief, material progress refreshes the heartbeat binding, and terminal state reclaims it.
 - One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
+- Every parent-executed persistent change activates one independent read-only audit child before mutation; its final-state verdict is part of the single evidence bundle, not a second gate, and `FAIL` or `BLOCKED` prevents acceptance until resolved.
 - Before mutation, inspect the canonical target checkout, worktree registrations, writers, and mutating processes or locks; if the target is clean and unoccupied and policy does not require isolation, edit and commit there instead of creating a task worktree.
 - Every selected checkout declares `direct_target` or `isolated_worktree` plus `must_integrate`, `research_only`, or `checkpoint_only`, its target, baseline, owner, integration owner, and terminal action.
 - A candidate commit is not completion. For `must_integrate`, the designated integration owner must place the exact change on the target before the one final acceptance gate.
