@@ -73,6 +73,16 @@ worktree only when actual conflict or policy requires it. Read:
 - [heartbeat supervision](references/heartbeat-supervision.md) for an eligible
   mechanical background stage that outlives a normal turn.
 
+For migration, the audit first resolves the accepted source receipt or report
+and proves it still binds the current source identity, manifest, ordered members,
+recorded content hashes, and covered semantics. Persistence or path existence is
+not acceptance. Reuse valid immutable source evidence and never revalidate an
+unchanged payload merely because it will move or be copied. Audit the new
+transfer, write-exclusion, recovery, cutover, consumer, and cleanup risks; widen
+payload checks only when source evidence is stale or unbound, or the migration
+changes a covered invariant. Use the migration section of
+[verification and runtime](references/verification-and-runtime.md).
+
 A non-Git object needs lifecycle governance only when it survives its producing
 task or process, is shared or externally stored or published, is costly and
 intended for reuse, can be discovered by runtime or consumers, or needs a

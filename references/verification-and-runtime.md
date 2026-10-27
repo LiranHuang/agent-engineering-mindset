@@ -46,6 +46,47 @@ explicit bounded resource envelope and stop condition. “Safer,” “final sta
 or “fail closed” alone are not sufficient justifications. Independent audit
 must report unnecessary validation as a defect alongside missing validation.
 
+## Reuse accepted source evidence during migration
+
+A high-risk migration audit begins with evidence, not a payload replay. Resolve
+the accepted source receipt or report and confirm that it binds the current
+artifact identity, manifest identity, exact ordered members, recorded member and
+content hashes, baseline, schema, and the semantic invariants it claims to
+cover. A file being present, a prior write succeeding, or a copy completing is
+not proof of semantic acceptance.
+
+When the source evidence is current and the migration leaves payload,
+membership, order, encoding, partition meaning, selection, eligibility,
+decoding, and value semantics unchanged, retain that receipt as the proof of
+source semantics. Do not reopen, mmap, sample, or semantically revalidate the
+source payload. The pre-mutation audit instead checks the exact source and
+destination boundaries, source stability and concurrent-write exclusion,
+transfer method and integrity proof, failure recovery, cutover, real consumer
+loading, and old-path retention or cleanup.
+
+Choose migration checks by what changes:
+
+- same-filesystem move or rename: verify the exact move result, source absence
+  and destination presence, preserved identity and manifest binding, excluded
+  writers, consumer cutover, and recovery path;
+- byte-preserving copy: compare the destination against the source identity
+  recorded in the accepted receipt using an authoritative transfer checksum,
+  storage proof, or equivalent content/member-hash evidence; validate manifest
+  completeness, source stability, cutover, and cleanup. This proves transfer
+  integrity, not upstream numeric semantics; and
+- format, encoding, layout, partition, membership, order, selection,
+  eligibility, decoding, or value-semantic transformation: validate the exact
+  affected equivalence and semantic invariants. Expand toward full data only
+  when the changed invariant truly spans it and no narrower proof is sufficient.
+
+Missing, stale, conflicting, or identity-unbound source evidence fails closed.
+It justifies only the checks needed for the uncovered invariant, not an
+automatic whole-dataset replay. The final migration evidence names the source
+receipt, source and destination identities, transfer-integrity proof, write
+exclusion, recovery result, cutover, consumer load, and old-path disposition.
+It proves migration and adoption while the unchanged source receipt continues
+to prove the upstream payload semantics.
+
 ## Integration determines the acceptance surface
 
 For `adoption_mode=must_integrate`, the single final acceptance gate always evaluates the exact committed canonical target revision. With `workspace_mode=direct_target`, the scoped commit already is that target revision. With `workspace_mode=isolated_worktree`, checks on the isolated branch or workspace are implementation preflight; integrate the exact candidate into the declared canonical target before the gate. Do not require a branch PASS and a target PASS as two cumulative acceptance gates. Resolve semantic conflicts explicitly even if version-control tooling reports no textual conflict, and retain patch-equivalence evidence when squash, rebase, or cherry-pick breaks ancestry.
