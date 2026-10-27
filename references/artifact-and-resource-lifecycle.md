@@ -1,26 +1,23 @@
 # Artifact and resource lifecycle
 
-Use this reference for managed non-Git artifacts, destructive or externally
-visible artifact operations, lifecycle-ledger migration, or large-resource work.
-Git is the lifecycle owner for ordinary tracked source, tests, configuration,
-prompts, and documentation; do not ledger them merely because they change.
+Use this reference for the strict lifecycle of every project file and directory,
+including Git-tracked files, non-Git outputs, destructive or externally visible
+operations, ledger migration, and large-resource work. Git owns tracked content
+and revision history; the ledger owns file identity and lifecycle metadata.
+Neither may substitute for the other.
 
 ## Scope the ledger correctly
 
-A non-Git object is managed when it survives the producing task or process, is
-shared or externally stored or published, is costly and intended for reuse, can
-be discovered by a runtime or consumer, or needs a deliberate retention or
-cleanup decision. Typical examples are retained outputs, datasets, databases,
-models, checkpoints, shared caches or logs, shared mutable runtime state, and
-exceptional worktrees needing durable tracking.
+Every file or directory the task will create, modify, rename, move, adopt,
+retain, or delete is managed, including source, tests, configuration, schemas,
+scripts, prompts, documentation, generated files, build/test outputs, logs,
+caches, ignored files, datasets, databases, models, checkpoints, shared runtime
+state, and task worktrees. The only exemption is an object that remains wholly
+inside a process, has no project- or externally addressable path, and disappears
+before the producing command returns. If uncertain, register it or stop before
+further mutation.
 
-Process-local or task-local scratch, ordinary build/test temporaries, and
-ignored disposable files are not managed when they are unshared, have no
-retention or reuse value, cannot be discovered by runtime, and are automatically
-removed before task closure. If any condition is uncertain, treat the object as
-managed. Do not bootstrap a ledger for a source-only Git edit.
-
-A project with managed artifacts has exactly one canonical writable ledger for
+A project has exactly one canonical writable ledger for
 its declared governed roots. Use one SQLite transactional database through one
 project-owned local service or CLI. Authorized agents may concurrently call the
 interface for their assigned stable ids, but no agent opens the database
@@ -34,6 +31,16 @@ re-read and bounded retry or owner reconciliation. Last-write-wins, blind
 upsert, and writable JSON exports are forbidden. Ledger access never grants
 authority to mutate the artifact it describes.
 
+Git is the sole authority for tracked contents, index, blobs, commits, merges,
+and adopted revisions. The ledger stores only stable file id, exact path and
+history, owner, classification, references, lifecycle events, evidence, and
+adopted revision or content identity metadata. It never stores or reconstructs
+source contents. If no authority exists, one explicitly authorized genesis
+bootstrap may atomically create the unique database, CLI/service, governed-root
+declaration, and immutable genesis evidence. Close that exception after the
+first successful transaction; an existing declared or writable authority
+forbids another bootstrap.
+
 For an externally visible, irreversible, or managed-artifact deletion, move,
 publication, or other lifecycle action, record a bounded operation intent and
 idempotency token, perform the separately authorized action, verify the
@@ -44,21 +51,25 @@ reader/writer cutovers, then retire the old path; never dual-write.
 
 ## Register and close task scope
 
-Register a managed artifact when created or adopted. Bound a set by an exact
-directory or manifest, never an open glob or whole drive. Record stable id,
-location, owner, producer, purpose, timestamps, references, lifecycle state,
-terminal evidence, and exactly one classification:
+Before first mutation, read or create one entry for every exact touched file and
+record its stable id, location, owner, producer, purpose, admitted Git/content
+identity, intended action, timestamps, references, lifecycle state, and exactly
+one classification. A closed manifest may batch the transaction, but each member
+keeps an individual stable id, revision, path history, and terminal state. Never
+use an open glob, whole repository, whole worktree, or whole drive as a file
+entry.
 
 - `temporary`: exactly one `deadline`, `event`, or `gate` cleanup trigger;
 - `long_term`: retention basis, live consumer, review condition, and retirement
   condition.
 
-Cleanup is active for task-created or task-adopted managed artifacts and for
-artifacts that block the task's ownership, safety, acceptance, or continuation.
-Resolve and update the ledger only when the task performs a lifecycle action on
-such an artifact, after a relevant trigger, and at the task's terminal boundary.
-Merely entering a project or editing a Git-tracked file inside a governed root
-does not trigger a ledger read. Remove an eligible owned inactive artifact
+After the authorized Git or filesystem action, verify the exact path,
+Git/content identity, or absence postcondition and record the terminal adopted,
+moved, deleted, or blocked transition. At task closure, reconcile every touched
+entry with the exact adopted Git state and every task-created output root with
+its bounded inventory. A new file must be committed or deliberately adopted,
+cleaned under its temporary trigger, or closed with the exact blocker, next
+owner, and next cleanup point. Remove only eligible owned inactive artifacts
 within authority and record terminal evidence.
 
 Do not turn inherited overdue entries or inventory gaps into unrelated task
@@ -70,9 +81,11 @@ A future deadline is real-time only when a live project-owned scheduler or
 cleanup runner is bound with observable execution evidence. Policy text does
 not wake itself.
 
-For Git-backed work, any task-created file visible in porcelain status must be
-adopted in the exact scoped commit or removed/relocated by its owner. Do not add
-an ignore rule merely to hide unexplained dirt.
+For Git-backed work, every task-created tracked, untracked, generated, or ignored
+file must be adopted in the exact scoped commit or ledger state, or removed by
+its owner. Direct persistent output into a pre-registered exact path or closed
+manifest. Do not add an ignore rule merely to hide unexplained dirt, and do not
+use broad clean, reset, or stash as lifecycle closure.
 
 ## Bound large-resource work
 

@@ -34,17 +34,21 @@ authoritative state is unchanged.
 For an ordinary reversible Git edit with bounded consequences:
 
 1. Inspect the current ref, baseline, affected owner, and full status.
-2. Confirm the affected paths and semantic surface have no overlapping writer.
-3. Edit the canonical owner directly, stage only task-owned paths, inspect the
+2. Confirm the affected paths and semantic surface have no overlapping writer,
+   then resolve each exact touched file in the project's unique lifecycle ledger.
+3. Record the admitted Git/content identity and intended action before writing;
+   edit the canonical owner directly, stage only task-owned paths, inspect the
    exact candidate, and run one focused check.
-4. Commit when durable adoption is requested or implied by the repository task,
-   then make one final acceptance decision on that adopted diff or revision.
+4. Commit when durable adoption is requested or implied, update every touched
+   file entry to the adopted revision/content identity or terminal cleanup state,
+   then make one final acceptance decision on that revision and ledger state.
 
-Ordinary work does not require an audit child, artifact-ledger entry,
-project-wide cleanup sweep, process/lock scan, worktree inventory, explicit
-adoption state machine, or checkpoint solely because a tracked file changes.
-Unrelated dirt may remain when it is disjoint, recorded in the baseline, never
-staged or modified, and not part of acceptance.
+Ordinary work requires per-file lifecycle records but does not require an audit
+child, project-wide cleanup sweep, process/lock scan, worktree inventory,
+explicit adoption state machine, or checkpoint solely because a tracked file
+changes. Git remains the content authority; the ledger stores identity and
+lifecycle metadata only. Unrelated dirt may remain when it is disjoint, recorded
+in the baseline, never staged or modified, and not part of acceptance.
 
 Escalate before mutation when consequences are high-risk: production or loaded
 runtime behavior; deployment, restart, publication, or external side effects;
@@ -59,15 +63,15 @@ call, or the mere presence of schema or data files.
 
 For high-risk work, apply only the relevant controls required by `AGENTS.md`:
 one independent read-only audit, exact baseline and adoption identity,
-transactional lifecycle tracking for managed non-Git artifacts or destructive
-operations, runtime loader evidence when runtime changes, and an isolated
-worktree only when actual conflict or policy requires it. Read:
+transactional per-file lifecycle tracking, operation intents for destructive
+actions, runtime loader evidence when runtime changes, and an isolated worktree
+only when actual conflict or policy requires it. Read:
 
 - [state and revision integrity](references/state-and-revision-integrity.md) for
   isolated worktrees, handoff, non-current targets, checkpoints, or merge
   boundaries;
 - [artifact and resource lifecycle](references/artifact-and-resource-lifecycle.md)
-  for managed non-Git artifacts, destructive lifecycle operations, or large I/O;
+  for exact file entries, destructive lifecycle operations, or large I/O;
 - [verification and runtime](references/verification-and-runtime.md) for
   integration, runtime loading, data-integrity changes, or high-risk acceptance;
 - [heartbeat supervision](references/heartbeat-supervision.md) for an eligible
@@ -83,13 +87,15 @@ payload checks only when source evidence is stale or unbound, or the migration
 changes a covered invariant. Use the migration section of
 [verification and runtime](references/verification-and-runtime.md).
 
-A non-Git object needs lifecycle governance only when it survives its producing
-task or process, is shared or externally stored or published, is costly and
-intended for reuse, can be discovered by runtime or consumers, or needs a
-deliberate retention or cleanup decision. Unshared task-local scratch and
-ordinary build/test temporaries need no ledger when they are automatically
-removed before closure. If lifecycle or visibility is unclear, treat the object
-as managed.
+Every project file or directory touched by the task uses the same lifecycle
+authority, including Git-tracked source/test/config/docs and non-Git outputs.
+Only wholly process-internal objects that have no addressable project path and
+disappear before the producing command returns are exempt. If no authority
+exists, an authorized project change may perform one bounded genesis bootstrap
+for the unique SQLite database, CLI/service, governed-root declaration, and
+genesis evidence; any existing authority forbids bootstrap. Read
+[artifact and resource lifecycle](references/artifact-and-resource-lifecycle.md)
+for the strict per-file protocol and cleanup closure.
 
 ## Keep versions and worktrees bounded
 
@@ -137,6 +143,7 @@ audit is required, its verdict belongs inside this same final bundle and must
 flag both missing evidence and redundant validation.
 
 At closure, confirm the requested outcome, exact adopted diff or revision,
-focused evidence, preservation of unrelated state, and only the lifecycle items
-actually touched: task-created managed artifacts, runtime state, or exceptional
-worktrees. Do not turn inherited maintenance debt into unrelated task scope.
+focused evidence, preservation of unrelated state, every touched file's ledger
+transition, every task-created output's adoption or cleanup, runtime state when
+changed, and exceptional worktrees. Do not turn inherited maintenance debt into
+unrelated task scope.
