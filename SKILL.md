@@ -52,6 +52,33 @@ Keep generated outputs outside the source worktree or in project-owned ignored l
 
 ## Bind verification to the thing that changed
 
+Exact accepted-state evidence is impact-scoped evidence, not permission to
+revalidate every dependency. Classify the delta before selecting checks. A
+payload or content-hash, member set or order, encoding, partition,
+value-producing transformation, selection, or eligibility change requires
+content, hash, coverage, and semantic checks for the affected data. An owner
+identity, receipt, contract, manifest identity, or reference-hash change with
+unchanged member and payload hashes requires fail-closed identity,
+recorded-hash, and reference-closure checks for the affected owner, not a
+payload scan. A value-free binding, locator, catalog, index, or control object
+that preserves
+the referenced owner identities and hashes requires schema, receipt/hash
+binding, reference-closure, resolution, and real-consumer checks; do not reopen,
+mmap, hash, or sample-read unchanged payloads. A consumer or adapter change
+requires the real query and resulting boundary input or behavior; reopen
+affected value validation only if selection, decoding, interpretation,
+ordering, membership, or eligibility semantics changed.
+
+An existing immutable receipt becomes stale only when its candidate, baseline,
+input, semantic owner, validation implementation, or covered invariant changed.
+Full-data, full-history, or whole-dependency-graph validation is forbidden
+unless the changed invariant actually spans that scope and no narrower
+authoritative proof is sufficient.
+Record that justification and a bounded resource envelope before such a run.
+The mandatory audit must detect both under-validation and redundant validation
+outside the change impact surface. Read [verification and runtime](references/verification-and-runtime.md)
+whenever validation could traverse large or unchanged dependencies.
+
 Before mutation, inspect the canonical target checkout's exact ref and baseline, full porcelain status, registered worktrees, assigned write owners, and active processes or locks capable of mutation. Choose `workspace_mode=direct_target` by default. When that checkout is clean, attached to the intended target branch at the admitted baseline, has no other active writer, mutating process, or lock on the checkout or overlapping semantic surface, and project policy does not require isolation, do not create a task worktree. Edit, explicitly stage, commit, validate, and close directly in the canonical target checkout. An inactive registered worktree, idle chat, or clean unrelated checkout is not by itself target occupancy.
 
 Use or reuse `workspace_mode=isolated_worktree` only when direct target mutation is blocked by unrelated dirt, real concurrent or overlapping ownership, an active mutating process or lock, explicit handoff or merge isolation, material merge risk, or repository policy. For the selected workspace, establish an adoption contract before mutation: `adoption_mode` (`must_integrate`, `research_only`, or `checkpoint_only`), exact `target_ref` when integration is intended, `baseline_sha`, live owner, integration owner, and terminal action. A `must_integrate` task is not complete while its accepted change exists only on a task branch. A `research_only` or `checkpoint_only` task must not be merged merely to make cleanup easier.
