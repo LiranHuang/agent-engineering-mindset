@@ -1,98 +1,122 @@
 ---
 name: agent-engineering-mindset
-description: Apply mandatory independent audit, evidence, canonical-adoption integrity, and clean-worktree closure to repository changes and nontrivial implementation, repair, optimization, migration, and runtime work.
+description: Keep engineering work anchored to the main goal, canonical owner, highest-ROI next action, one impact-scoped final gate, and proportionate version, artifact, worktree, runtime, and audit controls.
 ---
 
 # Agent Engineering Mindset
 
-Use for any Git-backed code, configuration, test, build, or repository-documentation change, and for nontrivial technical work when continuation, a changed baseline, a candidate revision, generated artifacts, or runtime promotion could make a plausible result misleading. It adds engineering evidence, state consistency, and clean-worktree closure; it does not own or redefine the host's delegation, approval, Goal, worktree, task, thread, automation, permission, or notification flows. Follow those facilities and applicable `AGENTS.md` instructions.
+Use for Git-backed implementation and other technical work where state,
+ownership, generated artifacts, integration, or runtime loading can make a
+plausible result misleading. Follow applicable `AGENTS.md` authority and risk
+rules. This skill adds repository mechanics; it does not create a second goal,
+permission, worktree, ledger, or acceptance system.
 
-## Establish the true change surface
+## Anchor the work
 
-Before a consequential mutation or acceptance decision, identify from current evidence:
+Identify the user's observable main goal, the smallest necessary current stage,
+the canonical semantic owner, and the evidence that will prove the adopted
+result. Choose the highest-ROI safe action that advances the main goal. Reject
+substitute surfaces, speculative infrastructure, duplicated evidence, and
+cleanup or refactors unrelated to the current outcome.
 
-- the authoritative objective, canonical semantic owner, and authoritative inputs;
-- the intended target surface and adjacent surfaces that must not substitute for it;
-- the admitted baseline, task-owned delta or candidate revision when version control applies; and
-- the required observable acceptance evidence and terminal state.
+Repair or extend the canonical owner. Reuse, consolidate, or retire before
+creating another implementation, entry point, fallback, configuration owner,
+or tracking store. Preserve unrelated state.
 
-Use project-owned records when they exist. Do not create a parallel tracking system merely to satisfy this skill. Preserve unrelated changes and do not treat chat summaries, a clean diff, or a prior report as proof of current state.
+Re-ground only after a material state transition or drift signal: integration,
+handoff, conflicting evidence, changed authoritative input, baseline mismatch,
+overlapping ownership, or uncertain runtime identity. Compaction, model change,
+or a child result alone does not justify repeating broad discovery when the
+authoritative state is unchanged.
 
-Re-ground from the real repository, configuration, artifact, or runtime state after compaction, resume, handoff, model change, a child result, a new requirement, or any other transition that may have changed ownership or baseline. Hold the affected mutation when the target, owner, baseline, candidate, or acceptance evidence cannot be re-proven. Read [state and revision integrity](references/state-and-revision-integrity.md) when the work has a mutable baseline, handoff, candidate revision, or merge boundary.
+## Use proportionate governance
 
-For every Git-backed change, read [state and revision integrity](references/state-and-revision-integrity.md) before the first edit. Start from an empty `git status --porcelain=v1 --untracked-files=all` in the worktree that will receive the change. If it is dirty, do not add another change: reconcile a clearly owned recovery task or use a clean isolated worktree. Never build on unrelated dirt.
+For an ordinary reversible Git edit with bounded consequences:
 
-## Require one independent audit child
+1. Inspect the current ref, baseline, affected owner, and full status.
+2. Confirm the affected paths and semantic surface have no overlapping writer.
+3. Edit the canonical owner directly, stage only task-owned paths, inspect the
+   exact candidate, and run one focused check.
+4. Commit when durable adoption is requested or implied by the repository task,
+   then make one final acceptance decision on that adopted diff or revision.
 
-When the active parent will execute a development, repair, optimization, refactor, migration, or any other task that creates a persistent change to code, configuration, tests, build or deployment logic, prompts or policies, schemas, repository documentation, or a loaded runtime, activate exactly one independent read-only audit child before the first mutation. Use the host's stable verifier or audit role when available. The child receives no implementation ownership and may not edit the product, candidate, configuration, runtime, or policy it audits.
+Ordinary work does not require an audit child, artifact-ledger entry,
+project-wide cleanup sweep, process/lock scan, worktree inventory, explicit
+adoption state machine, or checkpoint solely because a tracked file changes.
+Unrelated dirt may remain when it is disjoint, recorded in the baseline, never
+staged or modified, and not part of acceptance.
 
-Brief the audit child with the objective, admitted baseline, canonical owner, allowed and forbidden scope, intended adoption path, and final acceptance boundary. It may inspect the current surface while the parent implements. Before acceptance, bind its verdict to the exact final adopted revision or bounded diff and the single evidence bundle. Treat `PASS`, `FAIL`, or `BLOCKED` as evidence inside the parent's one final acceptance decision, not as an additional gate. The parent owns remediation, integration, and the final claim.
+Escalate before mutation when consequences are high-risk: production or loaded
+runtime behavior; deployment, restart, publication, or external side effects;
+security, credentials, authorization, or privacy; destructive or irreversible
+actions; financial, eligibility, or data-integrity semantics; concurrency,
+transactions, schema/data/cross-module migration, cutover, or recovery; shared
+mutable or large non-Git artifacts; overlapping ownership; handoff or merge
+isolation; or a broad change whose failure impact is not locally bounded. A
+small diff can still be high-risk.
 
-If no independent audit child can be activated, do not start the mutation. If it becomes unavailable after mutation, preserve a clean explicitly unaccepted checkpoint and do not claim completion until the exact final state is audited. An audit `BLOCKED` or inability to inspect that state blocks acceptance. An audit `FAIL` returns work to the same canonical implementation path for repair; after the state changes, replace the stale verdict with one audit of the new final state and rerun the single final gate. Read-only diagnosis, explanation, research, status reporting, and other work with no persistent change do not trigger this requirement.
+For high-risk work, apply only the relevant controls required by `AGENTS.md`:
+one independent read-only audit, exact baseline and adoption identity,
+transactional lifecycle tracking for managed non-Git artifacts or destructive
+operations, runtime loader evidence when runtime changes, and an isolated
+worktree only when actual conflict or policy requires it. Read:
 
-## Keep one evidenced implementation path
+- [state and revision integrity](references/state-and-revision-integrity.md) for
+  isolated worktrees, handoff, non-current targets, checkpoints, or merge
+  boundaries;
+- [artifact and resource lifecycle](references/artifact-and-resource-lifecycle.md)
+  for managed non-Git artifacts, destructive lifecycle operations, or large I/O;
+- [verification and runtime](references/verification-and-runtime.md) for
+  integration, runtime loading, data-integrity changes, or high-risk acceptance;
+- [heartbeat supervision](references/heartbeat-supervision.md) for an eligible
+  mechanical background stage that outlives a normal turn.
 
-Repair or extend the canonical semantic owner rather than introducing a second owner, entry point, or unbounded fallback. Prefer reuse, repair, consolidation, and retirement before creation.
+## Keep versions and worktrees bounded
 
-Every project must have exactly one canonical artifact ledger. Resolve and use it before creating or retaining any file or data artifact, including scratch, generated output, caches, logs, archives, datasets, models, and external-drive output. Register each artifact at creation, classify it as `temporary` or `long_term`, and keep its owner, exact location, purpose, lifecycle state, and terminal evidence current. Every temporary entry defines exactly one `cleanup_trigger`—`deadline`, `event`, or `gate`—chosen for the most reliable observable transition; every long-term entry names its retention basis, live consumer, review condition, and retirement condition.
+`direct_target` is the default. Use the current branch and HEAD as the implicit
+`must_integrate` contract unless the task declares another target. Inspect
+registered worktrees, processes, or locks only when concurrency, a shared
+checkout, a runtime mutator, a drift signal, or project policy makes them
+relevant.
 
-Treat the ledger as a shared multi-agent registry, not as a file owned by one agent. Implement its canonical writable state as one SQLite transactional database accessed only through one project-owned local ledger service or CLI. Every project-authorized agent may concurrently call that interface, but no agent opens the database directly, writes raw SQL, maintains a private ledger copy, or adds an external lock-file protocol. Keep the database engine and service in one declared host operating-system and filesystem domain; cross-environment agents invoke the same interface instead of opening the database through a mounted path.
+Use or reuse an isolated worktree only for conflicting dirt, a real overlapping
+writer, handoff or merge isolation, material integration risk, an active
+mutator, or repository policy. Never create retry, `verify2`, or `v2` siblings
+as a substitute for reconciling the original instance. If a task worktree is
+created, integrate or preserve unique work, then remove it at every terminal
+outcome unless it is deliberately retained with a durable owner and removal
+condition.
 
-Each write is a short transaction over assigned stable ids: validate authority, compare the expected ledger and entry revisions, apply only the owned delta, append immutable actor and evidence history, increment the ledger revision, and commit. Revision conflicts fail closed for re-read and retry; last-write-wins is forbidden. A JSON representation is a derived read-only export, never a second writable owner. Ledger access does not grant permission to mutate, delete, publish, or adopt the artifacts it describes. A legacy ledger remains the sole writable authority until one migration gate proves complete import, transactional behavior, loader cutover, and retirement of the old write path; never dual-write during migration.
+An uncommitted bounded diff is valid when the user forbids commits or the task
+is explicitly review-only or experimental, but it is not an integrated
+completion. A pause that must preserve mutable work may use an explicitly
+unaccepted checkpoint. A local commit never authorizes push, deployment,
+restart, publication, or another external action.
 
-Cleanup is required execution, not passive bookkeeping. On first project entry, after a relevant trigger transition, at task or stage termination, and before the final answer, read the ledger, evaluate task-owned entries and other entries whose triggers are now due and safely actionable, immediately remove eligible artifacts within current authority, and record terminal evidence. Do not merely list cleanup candidates. Reconcile the task-owned artifact set and the exact roots it changed. Record inherited project-wide inventory gaps as explicit lifecycle debt with an owner and next review point; they block this task only when they make its ownership, safety, final state, or acceptance evidence ambiguous. A future deadline provides exact-time cleanup only when a live project-owned scheduler or cleanup runner is bound to it; otherwise it is cleaned on the next responsible agent entry and must not be represented as real-time automation. Do not claim cleanup or completion while an eligible task-owned temporary entry, a due actionable entry accepted by this task, or an orphan created by this task remains.
+## Validate once, by impact
 
-Keep project identity and storage policy outside this skill. Do not embed a project name, repository path, drive or mount, business-layer name, output root, branch name, scheduler name, or project-specific cleanup destination in the skill or its generic examples. Resolve those values only from the active project's instructions, canonical configuration, ledger, or current user request. The skill defines invariants; each project defines its concrete names and locations.
+Run exactly one final acceptance gate on the adopted state. It may contain
+several focused checks, but produces one evidence bundle and one decision.
+Validate only invariants the delta can invalidate:
 
-For large-I/O work, define a proportionate resource envelope before reading or writing: bounded input/output, streaming or chunking strategy, concurrency, spill location, reusable partial progress, and a stop condition. Do not impose that overhead on ordinary small work. Read [artifact and resource lifecycle](references/artifact-and-resource-lifecycle.md) when creating or retaining artifacts, replacing an existing artifact, reconciling the project ledger, or handling large resources.
+- changed payload, membership, ordering, decoding, selection, eligibility, or
+  value-producing semantics: check affected values, hashes, coverage, and real
+  consumers;
+- changed identity, receipt, manifest, or reference with unchanged payload:
+  check identity, recorded hashes, and reference closure without rescanning
+  unchanged payload;
+- value-free binding, locator, catalog, index, or metadata: check schema,
+  bindings, resolution, and one real consumer without reopening immutable data;
+- changed consumer or adapter: exercise the real lookup and boundary behavior;
+- runtime change: prove the real loader uses the adopted revision or config.
 
-For a mechanical long-running background stage, the parent may attach one host-native heartbeat to the existing task or thread when progress and terminal state are observable and no recurring human judgment is expected. Use it only to supervise the canonical run, update its next-check binding after material progress, and reclaim it at terminal state. Minimize avoidable model usage; do not represent heartbeat turns as free. Read [heartbeat supervision for mechanical long-running tasks](references/heartbeat-supervision.md) before creating or updating such a heartbeat.
+Full-data, full-history, or whole-dependency validation is forbidden unless the
+changed invariant spans that scope and no narrower authoritative proof is
+sufficient. Record that reason and a bounded resource envelope. When high-risk
+audit is required, its verdict belongs inside this same final bundle and must
+flag both missing evidence and redundant validation.
 
-Keep generated outputs outside the source worktree or in project-owned ignored locations unless they are deliberate task-owned deliverables. An unignored generated file is repository dirt and blocks closure until it is adopted in the task commit or removed or relocated by its owner.
-
-## Bind verification to the thing that changed
-
-Exact accepted-state evidence is impact-scoped evidence, not permission to
-revalidate every dependency. Classify the delta before selecting checks. A
-payload or content-hash, member set or order, encoding, partition,
-value-producing transformation, selection, or eligibility change requires
-content, hash, coverage, and semantic checks for the affected data. An owner
-identity, receipt, contract, manifest identity, or reference-hash change with
-unchanged member and payload hashes requires fail-closed identity,
-recorded-hash, and reference-closure checks for the affected owner, not a
-payload scan. A value-free binding, locator, catalog, index, or control object
-that preserves
-the referenced owner identities and hashes requires schema, receipt/hash
-binding, reference-closure, resolution, and real-consumer checks; do not reopen,
-mmap, hash, or sample-read unchanged payloads. A consumer or adapter change
-requires the real query and resulting boundary input or behavior; reopen
-affected value validation only if selection, decoding, interpretation,
-ordering, membership, or eligibility semantics changed.
-
-An existing immutable receipt becomes stale only when its candidate, baseline,
-input, semantic owner, validation implementation, or covered invariant changed.
-Full-data, full-history, or whole-dependency-graph validation is forbidden
-unless the changed invariant actually spans that scope and no narrower
-authoritative proof is sufficient.
-Record that justification and a bounded resource envelope before such a run.
-The mandatory audit must detect both under-validation and redundant validation
-outside the change impact surface. Read [verification and runtime](references/verification-and-runtime.md)
-whenever validation could traverse large or unchanged dependencies.
-
-Before mutation, inspect the canonical target checkout's exact ref and baseline, full porcelain status, registered worktrees, assigned write owners, and active processes or locks capable of mutation. Choose `workspace_mode=direct_target` by default. When that checkout is clean, attached to the intended target branch at the admitted baseline, has no other active writer, mutating process, or lock on the checkout or overlapping semantic surface, and project policy does not require isolation, do not create a task worktree. Edit, explicitly stage, commit, validate, and close directly in the canonical target checkout. An inactive registered worktree, idle chat, or clean unrelated checkout is not by itself target occupancy.
-
-Use or reuse `workspace_mode=isolated_worktree` only when direct target mutation is blocked by unrelated dirt, real concurrent or overlapping ownership, an active mutating process or lock, explicit handoff or merge isolation, material merge risk, or repository policy. For the selected workspace, establish an adoption contract before mutation: `adoption_mode` (`must_integrate`, `research_only`, or `checkpoint_only`), exact `target_ref` when integration is intended, `baseline_sha`, live owner, integration owner, and terminal action. A `must_integrate` task is not complete while its accepted change exists only on a task branch. A `research_only` or `checkpoint_only` task must not be merged merely to make cleanup easier.
-
-Bind acceptance evidence to the exact state being adopted, plus the admitted baseline where relevant. In `direct_target`, the scoped commit already is the integrated target revision and receives the single final gate there. A passing branch or isolated workspace is implementation evidence only when `adoption_mode=must_integrate`; its single acceptance gate occurs after the exact candidate reaches the target. For a parent-executed persistent change, include the audit child's verdict on that exact state in the same evidence bundle. Pre-integration tests and earlier audit observations may guide implementation, but they are not additional acceptance decisions and cannot justify completion.
-
-For a runtime-affecting change, verify the real loader or entry path is using the intended revision or configuration, then check the relevant health or behavior. A successful build, local edit, or substitute-path test is insufficient if a stale process, configuration, artifact, or checkout can still be loaded.
-
-Fail closed on a material drift signal: ambiguous ownership, changed authoritative input, baseline mismatch, candidate/evidence mismatch, overlapping semantic change, target-surface substitution, or a runtime that cannot be tied to the verified result. Preserve evidence and return the discrepancy instead of papering over it with cleanup or a parallel path. Read [verification and runtime](references/verification-and-runtime.md) for integration, versioned candidates, runtime loading, or high-consequence acceptance.
-
-For a completed Git-backed change, stage only explicit task-owned paths, inspect the exact staged candidate, create a scoped local commit, and require empty full porcelain status. In `direct_target`, run the single final acceptance gate on that committed target revision. In an isolated `must_integrate` workspace, the designated integration owner integrates the exact candidate into `target_ref` using the authorized project workflow; only the resulting target state receives the single final gate. A code-changing task, stage, pause, or handoff is not closed while its selected checkout has staged, unstaged, or untracked task output. If work must pause before acceptance, preserve the bounded task state in an explicitly unverified checkpoint commit and still leave the checkout clean; never merge or run that checkpoint as an accepted revision. A local commit alone does not authorize push, deployment, restart, publication, or an otherwise unauthorized merge. If local integration is outside current authority, return `integration_pending` or the applicable blocked state to the user or owning parent; never report the implementation task complete. If an explicit instruction forbids commits, stop before editing because a persistent repository change would conflict with the clean-worktree invariant.
-
-Treat a task-created isolated worktree as temporary execution infrastructure, not as a completed deliverable or the default workspace. Before creating one, record the exact condition that made `direct_target` unavailable, inventory registered worktrees and the intended branch and path, then reuse a compatible existing worktree instead of creating retry, `verify2`, or `v2` siblings. A `must_integrate` worktree starts from its declared target baseline; do not stack it on an unintegrated task branch unless the adoption contract declares that dependency, integration order, and common integration owner. If creation partially fails, reconcile the exact path, registration, branch or detached revision, and files before retrying; resume the same instance or roll back only proven task-created partial state with no unique work.
-
-At every terminal outcome—integrated completion, failure, cancellation, supersession, or indefinite block—preserve unique work on a named ref or explicit checkpoint when needed, then remove the worktree registration and directory, or deliberately adopt it with a stable owner identity, reason, reference, and concrete next-use or removal condition. A bounded pause or handoff may retain it only with that durable binding; `idle`, `not loaded`, a chat title, or the word "current" is not a live owner. Before marking a Goal or task complete, make one terminal decision that confirms the adoption contract, patch-equivalent integration when required, final target validation, clean target and task worktrees, ledger transition, and worktree removal or deliberate adoption. This is the closure portion of the single final gate, not a second validation layer. Empty porcelain alone is not worktree closure. Follow [state and revision integrity](references/state-and-revision-integrity.md) and never force cleanup when ownership, unintegrated work, or active use is unresolved.
-
-Any heartbeat used for the task remains parent-owned lifecycle state: keep it bound to the canonical run, refresh its current next-check state after material progress, and remove or disable it at terminal success, failure, cancellation, supersession, or a decision blocker unless an explicitly authorized recovery still has a live owner.
+At closure, confirm the requested outcome, exact adopted diff or revision,
+focused evidence, preservation of unrelated state, and only the lifecycle items
+actually touched: task-created managed artifacts, runtime state, or exceptional
+worktrees. Do not turn inherited maintenance debt into unrelated task scope.

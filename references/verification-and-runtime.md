@@ -1,6 +1,8 @@
 # Verification and runtime integrity
 
-Use this reference for integration, runtime-affecting work, or acceptance where a stale artifact, configuration, checkout, or process could invalidate a local result.
+Use this reference for integration, runtime-affecting work, data-integrity
+changes, or high-risk acceptance where stale state could invalidate a local
+result. Ordinary bounded Git edits use the final gate in `SKILL.md`.
 
 ## Exact accepted-state evidence
 
@@ -48,7 +50,13 @@ must report unnecessary validation as a defect alongside missing validation.
 
 For `adoption_mode=must_integrate`, the single final acceptance gate always evaluates the exact committed canonical target revision. With `workspace_mode=direct_target`, the scoped commit already is that target revision. With `workspace_mode=isolated_worktree`, checks on the isolated branch or workspace are implementation preflight; integrate the exact candidate into the declared canonical target before the gate. Do not require a branch PASS and a target PASS as two cumulative acceptance gates. Resolve semantic conflicts explicitly even if version-control tooling reports no textual conflict, and retain patch-equivalence evidence when squash, rebase, or cherry-pick breaks ancestry.
 
-For a parent-executed persistent change, the independent audit child reviews the exact final adopted revision or bounded diff and returns `PASS`, `FAIL`, or `BLOCKED`. Include that verdict and its concrete findings in this same final evidence bundle. It is not a preceding or following gate. `BLOCKED` prevents acceptance; `FAIL` returns work to the same canonical implementation path. If the accepted state changes after review, discard the stale verdict and obtain one replacement audit of the new final state before rerunning the single gate and making the parent acceptance decision.
+When the high-risk criteria require independent audit, the child reviews the
+exact final adopted revision or bounded diff and returns `PASS`, `FAIL`, or
+`BLOCKED`. Include that verdict and its concrete findings in the same final
+evidence bundle. It is not a preceding or following gate. `BLOCKED` prevents
+acceptance; `FAIL` returns work to the same canonical implementation path. If
+the accepted state changes after review, discard the stale verdict and obtain
+one replacement audit of the new final state before rerunning the single gate.
 
 For `research_only` or `checkpoint_only`, do not merge merely to satisfy a generic closure pattern. Validate only the deliverable that the adoption contract actually defines, and keep an unverified checkpoint explicitly unaccepted.
 

@@ -1,13 +1,18 @@
 # Agent Engineering Mindset
 
-A deployable OpenClaw skill for requiring one independent read-only audit child on parent-executed persistent changes, keeping repository changes in clean committed checkouts, and anchoring long-running engineering work to one main goal, necessary stages, total-goal ROI, and one final validation gate. It edits the clean unoccupied canonical target directly by default and creates an isolated worktree only when evidence or project policy requires isolation.
+A deployable OpenClaw skill for anchoring engineering work to one main goal,
+necessary stages, total-goal ROI, canonical ownership, and one impact-scoped
+validation gate. Ordinary reversible Git edits use a lightweight direct-target
+path; audit, ledger, worktree, runtime, and destructive-operation controls are
+added only when their risk boundary applies.
 
 ## Core questions
 
 1. What observable user outcome is the authoritative main goal?
 2. How does the current stage measurably advance that goal?
 3. Which safe in-scope next action has the highest expected main-goal ROI?
-4. Is the canonical target checkout genuinely occupied, and what execution workspace, adoption mode, target ref, baseline, and integration owner apply?
+4. Can the bounded change safely use the direct target, or is an exceptional
+   workspace or adoption contract actually required?
 5. What exact adopted state will receive the single acceptance validation?
 6. What remains between a candidate commit and canonical completion?
 
@@ -79,12 +84,20 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - Low-ROI side work and substitute surfaces are rejected.
 - A mechanical long-running stage may use one task-attached heartbeat only when its canonical run, progress markers, and terminal evidence are observable; unchanged checks stay brief, material progress refreshes the heartbeat binding, and terminal state reclaims it.
 - One writer owns each overlapping semantic surface; disjoint ownership may proceed independently.
-- Every parent-executed persistent change activates one independent read-only audit child before mutation; its final-state verdict is part of the single evidence bundle, not a second gate, and `FAIL` or `BLOCKED` prevents acceptance until resolved.
-- Before mutation, inspect the canonical target checkout, worktree registrations, writers, and mutating processes or locks; if the target is clean and unoccupied and policy does not require isolation, edit and commit there instead of creating a task worktree.
-- Every selected checkout declares `direct_target` or `isolated_worktree` plus `must_integrate`, `research_only`, or `checkpoint_only`, its target, baseline, owner, integration owner, and terminal action.
+- Ordinary reversible Git edits do not require an audit child, ledger entry,
+  process scan, project-wide cleanup sweep, worktree, or explicit adoption state
+  machine solely because a tracked file changes.
+- High-risk changes activate one independent read-only audit child before
+  mutation; its exact final-state verdict is part of the single evidence bundle,
+  not a second gate.
+- Inspect worktree registrations, writers, and processes only when concurrency,
+  runtime mutation, handoff, drift, or project policy makes them relevant.
+- The ordinary contract is direct target, current branch/HEAD, must-integrate,
+  and parent-owned integration. Record an explicit contract only for exceptions.
 - A candidate commit is not completion. For `must_integrate`, the designated integration owner must place the exact change on the target before the one final acceptance gate.
 - A local commit does not authorize publication, deployment, restart, or an otherwise unauthorized merge.
-- Every repository change leaves each selected checkout with an empty `git status --porcelain=v1 --untracked-files=all`; a pause uses an explicitly unverified checkpoint commit.
+- Stage only task-owned paths and preserve unrelated state. A bounded review or
+  experiment may remain uncommitted but is not integrated completion.
 - Create or reuse a task worktree only for evidenced isolation needs; inventory and reuse compatible registrations, and reconcile a partial creation before retrying instead of creating renamed siblings.
 - At completion, failure, cancellation, supersession, or indefinite block, preserve unique work and remove the task worktree or deliberately adopt it with a live owner and removal condition.
 - Acceptance uses one final validation gate on the exact adopted state; branch checks for `must_integrate` are implementation preflight, not another acceptance gate.
