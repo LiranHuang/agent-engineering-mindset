@@ -7,11 +7,18 @@ prompts, and documentation; do not ledger them merely because they change.
 
 ## Scope the ledger correctly
 
-Managed artifacts include retained or generated outputs, datasets, databases,
-models, checkpoints, caches, logs, external-storage objects, shared mutable
-runtime state, exceptional task worktrees needing durable tracking, and
-artifacts involved in destructive or externally visible lifecycle operations.
-Do not bootstrap a ledger for a source-only Git edit.
+A non-Git object is managed when it survives the producing task or process, is
+shared or externally stored or published, is costly and intended for reuse, can
+be discovered by a runtime or consumer, or needs a deliberate retention or
+cleanup decision. Typical examples are retained outputs, datasets, databases,
+models, checkpoints, shared caches or logs, shared mutable runtime state, and
+exceptional worktrees needing durable tracking.
+
+Process-local or task-local scratch, ordinary build/test temporaries, and
+ignored disposable files are not managed when they are unshared, have no
+retention or reuse value, cannot be discovered by runtime, and are automatically
+removed before task closure. If any condition is uncertain, treat the object as
+managed. Do not bootstrap a ledger for a source-only Git edit.
 
 A project with managed artifacts has exactly one canonical writable ledger for
 its declared governed roots. Use one SQLite transactional database through one
@@ -27,12 +34,13 @@ re-read and bounded retry or owner reconciliation. Last-write-wins, blind
 upsert, and writable JSON exports are forbidden. Ledger access never grants
 authority to mutate the artifact it describes.
 
-For deletion, move, publication, or another external lifecycle action, record a
-bounded operation intent and idempotency token, perform the separately
-authorized action, verify the postcondition, then record terminal evidence.
-Intent alone is not success. During ledger migration, keep one writable
-authority, prove import and all real reader/writer cutovers, then retire the old
-path; never dual-write.
+For an externally visible, irreversible, or managed-artifact deletion, move,
+publication, or other lifecycle action, record a bounded operation intent and
+idempotency token, perform the separately authorized action, verify the
+postcondition, then record terminal evidence. Routine removal of task-local
+disposable scratch needs no operation record. Intent alone is not success.
+During ledger migration, keep one writable authority, prove import and all real
+reader/writer cutovers, then retire the old path; never dual-write.
 
 ## Register and close task scope
 
@@ -45,11 +53,13 @@ terminal evidence, and exactly one classification:
 - `long_term`: retention basis, live consumer, review condition, and retirement
   condition.
 
-Cleanup is active for task-created or task-adopted artifacts and for artifacts
-that block the task's ownership, safety, acceptance, or continuation. Read and
-update the ledger when the task touches a governed root or managed artifact,
-after a relevant trigger, and at the task's terminal boundary. Remove an
-eligible owned inactive artifact within authority and record terminal evidence.
+Cleanup is active for task-created or task-adopted managed artifacts and for
+artifacts that block the task's ownership, safety, acceptance, or continuation.
+Resolve and update the ledger only when the task performs a lifecycle action on
+such an artifact, after a relevant trigger, and at the task's terminal boundary.
+Merely entering a project or editing a Git-tracked file inside a governed root
+does not trigger a ledger read. Remove an eligible owned inactive artifact
+within authority and record terminal evidence.
 
 Do not turn inherited overdue entries or inventory gaps into unrelated task
 scope. Keep them as maintenance debt unless they block the current task or the

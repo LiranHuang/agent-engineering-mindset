@@ -49,11 +49,13 @@ staged or modified, and not part of acceptance.
 Escalate before mutation when consequences are high-risk: production or loaded
 runtime behavior; deployment, restart, publication, or external side effects;
 security, credentials, authorization, or privacy; destructive or irreversible
-actions; financial, eligibility, or data-integrity semantics; concurrency,
-transactions, schema/data/cross-module migration, cutover, or recovery; shared
-mutable or large non-Git artifacts; overlapping ownership; handoff or merge
-isolation; or a broad change whose failure impact is not locally bounded. A
-small diff can still be high-risk.
+state; financial, eligibility, data-integrity, selection, or other value
+semantics; shared concurrency or transaction integrity; backward-incompatible
+schema or public contracts; real migration, cutover, or uncertain-state
+recovery; shared mutable or large managed non-Git artifacts; overlapping write
+ownership; handoff or merge isolation; or failure impact that is not locally
+bounded. Risk follows consequences, not file count, module count, a database
+call, or the mere presence of schema or data files.
 
 For high-risk work, apply only the relevant controls required by `AGENTS.md`:
 one independent read-only audit, exact baseline and adoption identity,
@@ -70,6 +72,14 @@ worktree only when actual conflict or policy requires it. Read:
   integration, runtime loading, data-integrity changes, or high-risk acceptance;
 - [heartbeat supervision](references/heartbeat-supervision.md) for an eligible
   mechanical background stage that outlives a normal turn.
+
+A non-Git object needs lifecycle governance only when it survives its producing
+task or process, is shared or externally stored or published, is costly and
+intended for reuse, can be discovered by runtime or consumers, or needs a
+deliberate retention or cleanup decision. Unshared task-local scratch and
+ordinary build/test temporaries need no ledger when they are automatically
+removed before closure. If lifecycle or visibility is unclear, treat the object
+as managed.
 
 ## Keep versions and worktrees bounded
 
