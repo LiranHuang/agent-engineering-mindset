@@ -22,14 +22,14 @@ and independently integrable outputs. Serialize dependencies, shared owners,
 unresolved interfaces, and cutovers. Never require a planner-executor-reviewer
 pipeline, use every model, or create a worktree merely because a child exists.
 
-| Package | Role | Model | Reasoning |
+| Package | Role | Primary model/effort | Ordered fallbacks |
 | --- | --- | --- | --- |
-| Front-office and project execution management | parent | gpt-6.1-sol | high |
-| Ambiguous architecture and multi-constraint planning | b21, read-only | gpt-6-astra | high |
-| Bounded investigation and local decomposition | b21, read-only | gpt-6.1-sol | medium |
-| Ordinary implementation or repair | b22 | gpt-6.1-terra | medium |
-| Cross-module, concurrency, migration, security, integrity, recovery | b22 | gpt-6.1-terra | high |
-| Final irreversible-action precheck, only when engineering rules trigger it | b23, read-only | gpt-6.1-terra | high |
+| Front-office and project execution management | parent | gpt-6.1-sol/high | gpt-6.1-terra/high; gpt-6-sol/high |
+| Ambiguous architecture and multi-constraint planning | b21, read-only | gpt-6-astra/high | gpt-6.1-sol/high; gpt-6.1-terra/high |
+| Bounded investigation and local decomposition | b21, read-only | gpt-6.1-sol/medium | gpt-6.1-terra/medium; gpt-6-sol/high |
+| Ordinary implementation or repair | b22 | gpt-6.1-terra/medium | gpt-6.1-sol/medium; gpt-5.6-terra/high |
+| Cross-module, concurrency, migration, security, integrity, recovery | b22 | gpt-6.1-terra/high | gpt-6.1-sol/high; gpt-5.6-terra/high |
+| Final irreversible-action precheck, only when engineering rules trigger it | b23, read-only | gpt-6.1-terra/high | Pinned; no automatic substitution or second audit |
 
 Explicitly select model and effort for independent Codex b21/b22 packages;
 these roles are unpinned. Generic default Terra medium is not the b21 choice.
@@ -39,6 +39,39 @@ overrides. b23 is pinned. Report actual selection, not intended routing; changed
 defaults do not change running agents. Other runtimes use their native tools,
 tracking and available model controls, without inventing Codex arguments or
 changing providers. Escalate effort for concrete uncertainty, not routinely.
+
+## Bounded fallback
+
+Use fallback for service unavailability, capacity/rate limits, exhausted quota,
+or unsupported model/tool/effort settings. A failed test, uncertain requirement,
+missing authority, FAIL or BLOCKED verdict is not a service failure: repair,
+clarify or escalate the cause without changing acceptance.
+
+Use only candidates exposed by the actual runtime with the required tools,
+context capacity, permissions and data boundary. Skip unavailable candidates;
+do not assume a configured name is callable. For a transient failure allow one
+bounded retry respecting retry-after; for quota, auth or unsupported settings
+skip retry. Try at most two fallback candidates per package, then return the
+exact blocker; do not cycle models or wait indefinitely. Lowering effort is not
+a remedy for model-wide capacity or quota. Medium stays for bounded ordinary
+work; complex work keeps high, including on an older model.
+
+For mechanical, low-impact packages, gpt-6-luna/medium may replace the last
+candidate. A configured and authorized non-GPT route, such as DeepSeek Flash
+with thinking enabled, may likewise replace that candidate for bounded
+investigation or ordinary implementation; use its native supported effort.
+It must not silently replace complex planning, management or b23. Preserve the
+provider/data authorization boundary; no new credentials or provider setup is
+implied. These are routing instructions, not an implemented automatic failover.
+
+Before replacing a writer, stop it and reconcile in-flight side effects; never
+blindly replay a timed-out mutation. Transfer ownership, exact adopted/candidate
+state and residual work through a fresh closed package and isolated context.
+Record failure reason, actual selected model/effort and remaining attempts in
+the handoff, without another progress ledger. Parent model changes require a
+supported session switch or handoff; a child cannot silently replace the parent.
+b23 stays pinned: if unavailable, report the blocker and do not execute the
+irreversible action or turn a failed audit into a retry.
 
 ## Package and handoff
 
