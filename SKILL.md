@@ -59,56 +59,7 @@ For ordinary reversible Git work, use the current checkout, exact-path staging,
 one focused check, and one final acceptance decision. Follow a project-declared
 ledger without duplicating its protocol here.
 
-## Delegate independent Goal work
-
-For an active Goal, proactively delegate independent bounded work when parallel
-execution or a focused specialist context will materially improve speed or
-quality beyond handoff and review cost. Keep short ordered steps and overlapping
-writers with the parent.
-
-Start a new child for each new result-level subgoal by default. Reuse a child
-only to continue the same objective, module, semantic owner, write boundary, and
-acceptance criteria; any change requires a new child. Use `fork_turns="none"`
-for an independent package and provide a complete closed brief. Use `"all"`
-only when the work truly depends on continuous parent-conversation history.
-
-Children may create grandchildren under the same ROI, authority, and disjoint-
-ownership rules. When a child or descendant completes, fails, is cancelled, or
-is replaced, stop any active turn, release its slot, and never reuse its context
-as a general worker. The parent still owns integration and acceptance.
-
-## Role and model selection
-
-The front-office parent is also the project execution manager: GPT-6.1 Sol high
-by default. It retains user intent, the authoritative progress state, integration,
-and acceptance; do not create a second standing manager or require a planning
-child for every task.
-
-| Work package | Role | Model | Reasoning |
-| --- | --- | --- | --- |
-| Ambiguous architecture, competing constraints, complex planning | b21, read-only | gpt-6-astra | high |
-| Bounded investigation and local decomposition | b21, read-only | gpt-6.1-sol | medium |
-| Ordinary implementation and repair | b22 | gpt-6.1-terra | medium |
-| Cross-module, concurrency, migration, security, integrity, recovery | b22 | gpt-6.1-terra | high |
-| One final action with no reliable authorized rollback or recovery | b23, read-only | gpt-6.1-terra | high |
-
-For independent Codex b21/b22 packages, explicitly pass model and reasoning
-with `fork_turns="none"`; those roles remain unpinned to permit selection.
-The generic subagent default is Terra 6.1 medium, not the b21 planning choice.
-Use `"all"` only for genuine history continuity; it inherits the parent model
-and effort and does not accept overrides. Do not claim the table's model ran
-when the actual spawn inherited another one. b23 is pinned and is not an
-ordinary review stage. A new default does not change already running agents.
-
-Parallelize ready packages only when authoritative inputs are stable, owners
-and write ranges are disjoint, and results can be integrated independently.
-Serialize dependencies, shared owners, unresolved interfaces, and cutovers.
-Keep small work direct; do not force a planner-executor-reviewer sequence or
-use every model. Escalate effort for concrete uncertainty, not every task.
-
-On other runtimes, use their native delegation, task tracking, and supported
-model controls; this matrix is a preference when those models are available,
-not permission to invent Codex tool arguments or replace a runtime's provider.
+For delegation or agent handoff, load `task-collaboration`; solo work skips it.
 
 ## Load detail only when needed
 

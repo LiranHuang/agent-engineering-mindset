@@ -41,7 +41,7 @@ worktree and artifact closure
 - main-goal continuity and measurable stage alignment;
 - ROI-based continuation and rejection of drift or substitute work;
 - low-overhead heartbeat supervision for eligible mechanical long-running stages;
-- canonical ownership and bounded delegation;
+- canonical ownership; delegation is owned by the companion `task-collaboration` skill;
 - version, workspace, artifact, and runtime state integrity;
 - proportionate lifecycle and large-resource handling;
 - one final validation gate bound to the actual accepted state.
@@ -51,6 +51,10 @@ It does not replace OpenClaw tool policy, permissions, approvals, sandboxing, na
 ## Installation
 
 The repository root is the installable skill package because it contains `SKILL.md`.
+The companion package is `skills/task-collaboration/`. Install its contents as
+the sibling skill `task-collaboration` in the runtime's skill directory; keep it
+discoverable, but load it only for delegation or handoff. Installing this root
+alone does not install the companion. DSH retains its native task tracking.
 
 ```bash
 openclaw skills install . --global
@@ -107,6 +111,7 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 
 ```text
 SKILL.md
+skills/task-collaboration/SKILL.md
 references/heartbeat-supervision.md
 references/state-and-revision-integrity.md
 references/artifact-and-resource-lifecycle.md
