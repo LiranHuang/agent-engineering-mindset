@@ -43,12 +43,12 @@ Full-data, full-history, or whole-dependency-graph validation is prohibited by
 default. Admit it only when the changed invariant truly spans that scope, no
 narrower authoritative evidence can prove the requirement, and the run has an
 explicit bounded resource envelope and stop condition. “Safer,” “final state,”
-or “fail closed” alone are not sufficient justifications. Independent audit
-must report unnecessary validation as a defect alongside missing validation.
+or “fail closed” alone are not sufficient justifications. The parent must treat
+unnecessary validation as a defect alongside missing validation.
 
 ## Reuse accepted source evidence during migration
 
-A high-risk migration audit begins with evidence, not a payload replay. Resolve
+Migration validation begins with evidence, not a payload replay. The parent resolves
 the accepted source receipt or report and confirm that it binds the current
 artifact identity, manifest identity, exact ordered members, recorded member and
 content hashes, baseline, schema, and the semantic invariants it claims to
@@ -59,7 +59,7 @@ When the source evidence is current and the migration leaves payload,
 membership, order, encoding, partition meaning, selection, eligibility,
 decoding, and value semantics unchanged, retain that receipt as the proof of
 source semantics. Do not reopen, mmap, sample, or semantically revalidate the
-source payload. The pre-mutation audit instead checks the exact source and
+source payload. The parent instead checks the exact source and
 destination boundaries, source stability and concurrent-write exclusion,
 transfer method and integrity proof, failure recovery, cutover, real consumer
 loading, and old-path retention or cleanup.
@@ -91,13 +91,16 @@ to prove the upstream payload semantics.
 
 For `adoption_mode=must_integrate`, the single final acceptance gate always evaluates the exact committed canonical target revision. With `workspace_mode=direct_target`, the scoped commit already is that target revision. With `workspace_mode=isolated_worktree`, checks on the isolated branch or workspace are implementation preflight; integrate the exact candidate into the declared canonical target before the gate. Do not require a branch PASS and a target PASS as two cumulative acceptance gates. Resolve semantic conflicts explicitly even if version-control tooling reports no textual conflict, and retain patch-equivalence evidence when squash, rebase, or cherry-pick breaks ancestry.
 
-When the high-risk criteria require independent audit, the child reviews the
-exact final adopted revision or bounded diff and returns `PASS`, `FAIL`, or
-`BLOCKED`. Include that verdict and its concrete findings in the same final
-evidence bundle. It is not a preceding or following gate. `BLOCKED` prevents
-acceptance; `FAIL` returns work to the same canonical implementation path. If
-the accepted state changes after review, discard the stale verdict and obtain
-one replacement audit of the new final state before rerunning the single gate.
+Use b23 only when the next step is a closed final action proven to have no
+reliable and authorized rollback or recovery path. At the last responsible
+moment, the stable b23 session reviews the exact operation package once and
+returns `PASS`, `FAIL`, or `BLOCKED`. `PASS` authorizes only that identical
+package; `FAIL`, `BLOCKED`, inability to inspect, or any package change prohibits
+execution. Do not use b23 for preparation, reversible work, failure repair, or
+milestone review, and do not run a second or post-execution b23. After execution,
+the parent verifies deterministic postconditions and keeps the one verdict and
+postcondition evidence in the same final bundle. For migration, this applies
+only to a final cleanup or cutover action that meets the no-recovery definition.
 
 For `research_only` or `checkpoint_only`, do not merge merely to satisfy a generic closure pattern. Validate only the deliverable that the adoption contract actually defines, and keep an unverified checkpoint explicitly unaccepted.
 

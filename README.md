@@ -87,9 +87,8 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 - Ordinary reversible Git edits do not require an audit child, ledger entry,
   process scan, project-wide cleanup sweep, worktree, or explicit adoption state
   machine solely because a tracked file changes.
-- High-risk changes activate one independent read-only audit child before
-  mutation; its exact final-state verdict is part of the single evidence bundle,
-  not a second gate.
+- b23 runs once only immediately before a fully prepared final action with no
+  reliable authorized rollback or recovery; ordinary review stays with the parent.
 - Inspect worktree registrations, writers, and processes only when concurrency,
   runtime mutation, handoff, drift, or project policy makes them relevant.
 - The ordinary contract is direct target, current branch/HEAD, must-integrate,
