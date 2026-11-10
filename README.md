@@ -45,7 +45,7 @@ worktree and artifact closure
 - main-goal continuity and measurable stage alignment;
 - ROI-based continuation and rejection of drift or substitute work;
 - low-overhead heartbeat supervision for eligible mechanical long-running stages;
-- canonical ownership; delegation is owned by the companion `task-collaboration` skill;
+- canonical ownership; delegation is owned by the independent `task-collaboration` skill;
 - version, workspace, artifact, and runtime state integrity;
 - proportionate lifecycle and large-resource handling;
 - one final validation gate bound to the actual accepted state.
@@ -56,10 +56,9 @@ sandboxing, native goal state, task or worktree facilities, or project rules.
 ## Installation
 
 The repository root is the installable skill package because it contains `SKILL.md`.
-The companion package is `skills/task-collaboration/`. Install its contents as
-the sibling skill `task-collaboration` in the runtime's skill directory; keep it
-discoverable, but load it only for delegation or handoff. Installing this root
-alone does not install the companion.
+`task-collaboration` is maintained in its own repository and installed separately
+as a sibling skill. Load it only for delegation or handoff; this repository does
+not bundle it.
 
 Place each package in the host's configured skill discovery directory:
 
@@ -70,8 +69,8 @@ Place each package in the host's configured skill discovery directory:
 | OpenClaw | Its configured skill directory or skill installer |
 | Other runtimes | Their supported `SKILL.md` discovery directory |
 
-Copy the root `SKILL.md` and `references/` into `agent-engineering-mindset/`;
-copy `skills/task-collaboration/` into the sibling `task-collaboration/`.
+Copy the root `SKILL.md` and `references/` into `agent-engineering-mindset/`.
+Install `task-collaboration` from its independent repository when needed.
 Preserve relative reference paths and runtime-specific adaptations. In DSH,
 use native Goal/task tracking rather than introducing a second execution card.
 
@@ -96,7 +95,7 @@ openclaw skills install . --agent <agent-id>
 ## Verification
 
 Refresh the runtime's skill catalog using its supported mechanism and confirm
-both packages are visible and enabled. Check that solo work skips collaboration,
+installed packages are visible and enabled. Check that solo work skips collaboration,
 delegation loads `task-collaboration`, and engineering references resolve.
 Existing sessions may require a catalog refresh or a new session.
 
@@ -139,7 +138,6 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
 
 ```text
 SKILL.md
-skills/task-collaboration/SKILL.md
 references/heartbeat-supervision.md
 references/state-and-revision-integrity.md
 references/artifact-and-resource-lifecycle.md
