@@ -1,10 +1,14 @@
 # Agent Engineering Mindset
 
-A deployable OpenClaw skill for anchoring engineering work to one main goal,
+A reusable agent skill for anchoring engineering work to one main goal,
 necessary stages, total-goal ROI, canonical ownership, and one impact-scoped
 validation gate. Ordinary reversible Git edits use a lightweight direct-target
 path; audit, ledger, worktree, runtime, and destructive-operation controls are
 added only when their risk boundary applies.
+
+Use it with Codex, DeepSeek Harness (DSH), OpenClaw, or another agent runtime
+that can discover and load `SKILL.md` packages. Each runtime keeps its native
+tools, permissions, task tracking, and supported model controls.
 
 ## Core questions
 
@@ -46,7 +50,8 @@ worktree and artifact closure
 - proportionate lifecycle and large-resource handling;
 - one final validation gate bound to the actual accepted state.
 
-It does not replace OpenClaw tool policy, permissions, approvals, sandboxing, native goal state, managed task or worktree facilities, or project-specific rules.
+It does not replace the host runtime's tool policy, permissions, approvals,
+sandboxing, native goal state, task or worktree facilities, or project rules.
 
 ## Installation
 
@@ -54,7 +59,23 @@ The repository root is the installable skill package because it contains `SKILL.
 The companion package is `skills/task-collaboration/`. Install its contents as
 the sibling skill `task-collaboration` in the runtime's skill directory; keep it
 discoverable, but load it only for delegation or handoff. Installing this root
-alone does not install the companion. DSH retains its native task tracking.
+alone does not install the companion.
+
+Place each package in the host's configured skill discovery directory:
+
+| Runtime | Package destination |
+| --- | --- |
+| Codex | `~/.codex/skills/<skill-name>/` |
+| DeepSeek Harness | `~/.dsh/skills/<skill-name>/` |
+| OpenClaw | Its configured skill directory or skill installer |
+| Other runtimes | Their supported `SKILL.md` discovery directory |
+
+Copy the root `SKILL.md` and `references/` into `agent-engineering-mindset/`;
+copy `skills/task-collaboration/` into the sibling `task-collaboration/`.
+Preserve relative reference paths and runtime-specific adaptations. In DSH,
+use native Goal/task tracking rather than introducing a second execution card.
+
+### OpenClaw installation example
 
 ```bash
 openclaw skills install . --global
@@ -73,6 +94,13 @@ openclaw skills install . --agent <agent-id>
 ```
 
 ## Verification
+
+Refresh the runtime's skill catalog using its supported mechanism and confirm
+both packages are visible and enabled. Check that solo work skips collaboration,
+delegation loads `task-collaboration`, and engineering references resolve.
+Existing sessions may require a catalog refresh or a new session.
+
+For OpenClaw, use its runtime-specific checks:
 
 ```bash
 openclaw skills info agent-engineering-mindset --json
