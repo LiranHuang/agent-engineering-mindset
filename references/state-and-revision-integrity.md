@@ -4,6 +4,21 @@ Use this reference for isolated worktrees, handoff, non-current targets,
 checkpoint-only work, merge boundaries, or material baseline drift. Ordinary
 direct-target edits use the shorter path in `SKILL.md`.
 
+## Repository prerequisite
+
+Before writing or modifying project code, resolve its governing repository with
+`git -C <project-path> rev-parse --show-toplevel`. An existing parent repository
+or registered worktree counts; a local `.git` directory is not required. Access
+or Git execution errors are not proof that no repository exists.
+
+If no Git repository governs the project workspace, request user approval to
+initialize a local repository at the exact project root. Until approved, keep
+work read-only; do not write code, silently initialize Git, or create a nested
+repository. After approval, initialize it, inspect existing files for unrelated
+content and secrets, and track only authorized project paths before resuming
+code changes. Existing authorization to create that exact repository suffices.
+A GitHub remote or publication is separate and is not required for local tracking.
+
 ## Direct target
 
 The implicit ordinary contract is `direct_target + must_integrate + current

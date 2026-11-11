@@ -55,6 +55,10 @@ Repair the canonical owner. Re-ground only after integration, handoff,
 conflicting evidence, authoritative-input change, baseline mismatch, overlapping
 ownership, or uncertain runtime identity.
 
+Before code changes, resolve the governing Git worktree. If none exists, ask
+for user approval to initialize the exact project root before writing code;
+follow the repository prerequisite in the state/revision reference.
+
 For ordinary reversible Git work, use the current checkout, exact-path staging,
 one focused check, and one final acceptance decision. Follow a project-declared
 ledger without duplicating its protocol here.
