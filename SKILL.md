@@ -12,13 +12,21 @@ mechanics, not another goal, ledger, permission, or acceptance system.
 
 ## Engineer the stable Goal and mutable card
 
-Translate the user's original intent into one stable native Goal contract:
+Engineer the user's intent into one ordered result list before calling the
+native Goal creation API. Use that same list for the initial execution card and
+the Goal's required results: identical numbering, result titles and dependency
+order. Each item names an executable action and observable completion condition.
+Independent items may run in parallel; list order is not a mandatory serial DAG.
+Do not create the Goal as a dense paragraph and add a clearer card only afterward.
+The actual objective string sent to the API must preserve headings, line breaks
+and one numbered result per line, not merely display them in the chat:
 
 ```text
 Main goal: <observable end state>
 
 Required results:
-1. <independently closable result>
+1. <action and independently observable completion condition>
+2. <next result in dependency order>
 
 Execution constraints:
 - <durable scope, authority, acceptance, or stop boundary>
@@ -33,7 +41,9 @@ Goal Execution Card
 Main goal: <same observable end state>
 Progress: <completed>/<required>
 
-1. [√|→|×|!] <result>
+1. [√|→|×|!] <same result 1>
+   Progress: <one short current-state sentence>
+2. [√|→|×|!] <same result 2>
    Progress: <one short current-state sentence>
 ```
 
