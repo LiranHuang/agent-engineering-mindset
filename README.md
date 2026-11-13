@@ -130,8 +130,10 @@ For agents with an explicit skill allowlist, add `agent-engineering-mindset` wit
   experiment may remain uncommitted but is not integrated completion.
 - Create or reuse a task worktree only for evidenced isolation needs; inventory and reuse compatible registrations, and reconcile a partial creation before retrying instead of creating renamed siblings.
 - At completion, failure, cancellation, supersession, or indefinite block, preserve unique work and remove the task worktree or deliberately adopt it with a live owner and removal condition.
-- Acceptance uses one final validation gate on the exact adopted state; branch checks for `must_integrate` are implementation preflight, not another acceptance gate.
-- If that state changes, the prior result is stale and is replaced rather than layered with another gate.
+- Complete the main task, then use the smallest acceptance proving its outcome;
+  do not require child or branch preflight gates. Stop when acceptance passes.
+- Reuse evidence for unchanged invariants; after a change, recheck only failed
+  or invalidated parts, without default full suites, probes or smoke runs.
 - Runtime must load the accepted configuration, artifact, or revision rather than an accidental scratch or dirty dependency.
 
 ## Repository layout

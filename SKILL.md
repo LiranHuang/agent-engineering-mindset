@@ -72,8 +72,8 @@ Before code changes, resolve the governing Git worktree. If none exists, ask
 for user approval to initialize the exact project root before writing code;
 follow the repository prerequisite in the state/revision reference.
 
-For ordinary reversible Git work, use the current checkout, exact-path staging,
-one focused check, and one final acceptance decision. Follow a project-declared
+For ordinary reversible Git work, use the current checkout, exact-path staging
+and the single completion acceptance. Follow a project-declared
 ledger without duplicating its protocol here.
 
 For delegation or agent handoff, load `task-collaboration`; solo work skips it.
@@ -102,8 +102,12 @@ project rule. An isolated candidate is incomplete until integrated when
 integration is required. Preserve unique work, then remove the worktree at every
 terminal outcome unless a durable owner and removal condition justify retention.
 
-Run one impact-scoped final gate on the adopted state. Reuse immutable evidence,
-widen checks only for invalidated invariants, and prove the real loader when
-runtime changed. Temporary outputs must already be cleaned at last use or remain
+After completing the main task, run only the smallest acceptance that proves
+the requested outcome and directly affected invariants; stop when it passes.
+Do not default to full suites, regressions, probes, fixtures, hashes or smoke
+runs, or bundle them under one gate. Diagnose during implementation only to
+resolve a blocking unknown or failure. Reuse applicable evidence; after a fix,
+recheck only failed or invalidated parts. Use existing real entry paths and
+identity evidence; new test machinery needs an uncovered acceptance requirement. Temporary outputs must already be cleaned at last use or remain
 blocked under a live owner. The parent alone accepts the result and updates the
 card.

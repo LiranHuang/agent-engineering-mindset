@@ -4,11 +4,24 @@ Use this reference for integration, runtime-affecting work, data-integrity
 changes, or high-risk acceptance where stale state could invalidate a local
 result. Ordinary bounded Git edits use the final gate in `SKILL.md`.
 
-## Exact accepted-state evidence
+## Minimal completion acceptance
 
-Acceptance evidence must name or unambiguously identify the exact revision or bounded diff actually being adopted. It must also cover the admitted baseline when that baseline determines behavior. A previous result is not reusable after a relevant change to the candidate, target, baseline, inputs, or semantic owner.
+Advance the main task without a default testing phase. During implementation,
+use only a discriminating check needed to resolve a blocking unknown or failure.
+After completion, accept through the shortest authoritative path proving the
+user's requested outcome and directly affected invariants, then stop.
 
-For meaningful changes, exercise the smallest authoritative check that reaches the real entry path, not merely a helper or substitute path. Inspect the final delta for unauthorized scope, omitted required changes, and duplicate active implementations. Pair required positive behavior evidence with a negative or count check whenever stale or duplicate ownership is plausible.
+Do not accumulate probes, fixtures, hashes, health checks, smoke runs or test
+suites and call the collection one gate. Prefer existing entry paths and evidence;
+new machinery requires a specific uncovered acceptance requirement. Full-suite,
+whole-repository and unrelated-dependency testing is prohibited by default;
+explicit user requirements and applicable mandatory project checks still apply.
+
+Bind evidence to the adopted revision or bounded diff using existing identity
+where sufficient. Evidence remains reusable for invariants unaffected by a fix,
+commit, merge or nonfunctional edit. Recheck only failed or invalidated parts.
+Inspect the final diff as part of existing review; negative/count checks apply
+only when they resolve a concrete duplicate-owner risk, never automatically.
 
 ## Scope evidence by invalidated invariant
 
@@ -89,7 +102,12 @@ to prove the upstream payload semantics.
 
 ## Integration determines the acceptance surface
 
-For `adoption_mode=must_integrate`, the single final acceptance gate always evaluates the exact committed canonical target revision. With `workspace_mode=direct_target`, the scoped commit already is that target revision. With `workspace_mode=isolated_worktree`, checks on the isolated branch or workspace are implementation preflight; integrate the exact candidate into the declared canonical target before the gate. Do not require a branch PASS and a target PASS as two cumulative acceptance gates. Resolve semantic conflicts explicitly even if version-control tooling reports no textual conflict, and retain patch-equivalence evidence when squash, rebase, or cherry-pick breaks ancestry.
+The parent owns the one acceptance decision and may delegate its execution.
+For `must_integrate`, accept the actual adopted target; an isolated child does
+not need an independent preflight gate merely to hand off its candidate. Reuse
+child evidence for unchanged invariants and check only integration effects that
+can invalidate it. Resolve semantic conflicts even without textual conflicts;
+use existing revision/diff identity rather than inventing another proof system.
 
 Use b23 only when the next step is a closed final action proven to have no
 reliable and authorized rollback or recovery path. At the last responsible
@@ -106,6 +124,6 @@ For `research_only` or `checkpoint_only`, do not merge merely to satisfy a gener
 
 ## Prove the running system is loading the verified result
 
-When a change affects runtime behavior, identify the real loader or entry path and verify it uses the intended integrated revision, configuration, or artifact. Then check the relevant health and behavior. Look for loaders, configuration precedence, generated copies, long-lived processes, and other paths that could retain stale behavior.
+When runtime behavior changes, the acceptance path must reach the actual loaded revision, configuration or artifact. Check loader identity where stale loading is plausible; the same behavior observation can prove loading and the requested outcome. Do not add separate health, smoke or process sweeps when they add no missing evidence.
 
 Do not claim runtime success from source-tree state alone. If the loaded revision or configuration cannot be determined, report that limit and do not promote a local result into runtime acceptance.
