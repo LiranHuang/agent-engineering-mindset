@@ -58,8 +58,11 @@ when missing. Complete the Goal only at `N/N` with the observable outcome true.
 
 Advance the current card result through the highest-ROI safe action. Fold files,
 commits, tests, audits, ledger work, and child assignments into that result; do
-not turn them into subgoals. Reject speculative infrastructure, duplicate
-evidence, unrelated cleanup, and convenient later-stage work.
+not turn them into subgoals. Keep scope, architecture and process proportional
+to current requirements, contract boundaries and evidenced risks. Reject
+speculative infrastructure, hypothetical future needs, duplicate evidence and
+unrelated work; retain necessary security, integrity and reliable recovery.
+Assess excess scope within the existing acceptance, not another audit round.
 
 Repair the canonical owner. Re-ground only after integration, handoff,
 conflicting evidence, authoritative-input change, baseline mismatch, overlapping
