@@ -35,10 +35,13 @@ part of acceptance. Inspect process/lock state and all worktree registrations
 only when a shared checkout, concurrent writer, active runtime mutator, handoff,
 drift signal, or repository rule makes them relevant.
 
-For durable adoption, create a scoped commit unless the user forbids commits.
-An explicitly review-only or experimental task may end with a bounded
-uncommitted diff, but it is not integrated completion. A pause that must retain
-mutable work may use an explicitly unaccepted checkpoint commit.
+Parents and children must track persistent task-owned project content, inspect
+the exact staged diff and create a scoped local commit for durable adoption.
+Close task-owned changed and untracked paths while preserving unrelated dirt.
+If commits are forbidden or blocked, retain an exact owned diff and report the
+missing commit; it is not integrated completion. Review-only or experimental
+work is not integrated adoption. At interruption, preserve unfinished work in
+an explicitly unaccepted scoped checkpoint. Ledger records never replace Git.
 
 ## Exceptional adoption contract
 

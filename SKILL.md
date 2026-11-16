@@ -72,9 +72,22 @@ Before code changes, resolve the governing Git worktree. If none exists, ask
 for user approval to initialize the exact project root before writing code;
 follow the repository prerequisite in the state/revision reference.
 
-For ordinary reversible Git work, use the current checkout, exact-path staging
-and the single completion acceptance. Follow a project-declared
-ledger without duplicating its protocol here.
+For ordinary reversible Git work, use the current checkout and the single
+completion acceptance. Parents and children must Git-track persistent task-owned
+source, tests, configuration, scripts and documentation, inspect the exact staged
+diff, and create a scoped local commit before reporting adoption or DONE.
+A ledger entry, content hash or passing acceptance never replaces that commit.
+Preserve unrelated dirt; no broad staging or whole-tree cleanup is required.
+If interrupted, preserve unfinished task work in an explicitly unaccepted scoped
+checkpoint. If commits are forbidden or blocked, retain an exact owned diff and
+report the missing commit; do not claim integrated completion.
+
+Account for every task-created output: persistent project content is committed;
+non-Git data, logs, caches and runtime state follow their declared storage and
+lifecycle rules, never blind staging. Clean temporaries at last use. At return,
+no task-owned path may be unexplained: adopted, cleaned, or explicitly retained
+with an owner and next disposition. Follow the project ledger; it records
+lifecycle, not source history. This is closure, not another test gate.
 
 For delegation or agent handoff, load `task-collaboration`; solo work skips it.
 
@@ -103,7 +116,8 @@ integration is required. Preserve unique work, then remove the worktree at every
 terminal outcome unless a durable owner and removal condition justify retention.
 
 After completing the main task, run only the smallest acceptance that proves
-the requested outcome and directly affected invariants; stop when it passes.
+the requested outcome and directly affected invariants; stop validating when it
+passes, then finish the required Git and lifecycle closure.
 Do not default to full suites, regressions, probes, fixtures, hashes or smoke
 runs, or bundle them under one gate. Diagnose during implementation only to
 resolve a blocking unknown or failure. Reuse applicable evidence; after a fix,
