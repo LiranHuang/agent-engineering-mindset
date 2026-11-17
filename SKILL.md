@@ -89,7 +89,11 @@ no task-owned path may be unexplained: adopted, cleaned, or explicitly retained
 with an owner and next disposition. Follow the project ledger; it records
 lifecycle, not source history. This is closure, not another test gate.
 
-For delegation or agent handoff, load `task-collaboration`; solo work skips it.
+Before choosing solo or collaborative execution, consider independent work,
+including read-only analysis alongside a single code owner. When plausible,
+use `task-collaboration` for the delegation decision; also use it for handoffs.
+Clearly simple, wholly dependent work stays direct, without an extra checklist
+or mandatory parallelism.
 
 ## Load detail only when needed
 
